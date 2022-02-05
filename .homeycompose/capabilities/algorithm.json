@@ -1,0 +1,8 @@
+{
+    "type": "string",
+    "title": "Algorithm",
+    "getable": true,
+    "setable": false,
+    "uiComponent": "sensor",
+    "icon": "/assets/algorithm.svg"
+}

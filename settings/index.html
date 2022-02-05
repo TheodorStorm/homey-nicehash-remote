@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- The '/homey.js' script must be included in your settings view to work -->
+    <script
+      type="text/javascript"
+      src="/homey.js"
+      data-origin="settings"
+    ></script>
+  </head>
+  <body>
+    <h1 data-i18n="settings.title">
+      <!-- This will be filled with the translated string with key 'settings.title'. -->
+    </h1>
+    <p data-i18n="settings.subtitle">
+      <!-- This field will also be translated -->
+    </p>
+
+    <fieldset>
+      <legend>My Settings</legend>
+
+      <div class="field row">
+        <label for="apiKey">API Key</label>
+        <input id="apiKey" type="text" value="" />
+      </div>
+      <div class="field row">
+        <label for="apiSecret">API Secret</label>
+        <input id="apiSecret" type="text" value="" />
+      </div>
+      <div class="field row">
+        <label for="orgId">Organization ID</label>
+        <input id="orgId" type="text" value="" />
+      </div>
+    </fieldset>
+
+    <button id="save" class="right">Save changes</button>
+
+    <script type="text/javascript">
+      // a method named 'onHomeyReady' must be present in your code
+      function onHomeyReady(Homey) {
+        // Tell Homey we're ready to be displayed
+        Homey.ready();
+
+        var apiKeyElement = document.getElementById("apiKey");
+        var apiSecretElement = document.getElementById("apiSecret");
+        var orgIdElement = document.getElementById("orgId");
+        var saveElement = document.getElementById("save");
+
+        Homey.get("apiKey", function (err, val) {
+          if (err) return Homey.alert(err);
+          apiKeyElement.value = val;
+        });
+
+        Homey.get("apiSecret", function (err, val) {
+          if (err) return Homey.alert(err);
+          apiSecretElement.value = val;
+        });
+
+        Homey.get("orgId", function (err, val) {
+          if (err) return Homey.alert(err);
+          orgIdElement.value = val;
+        });
+
+        saveElement.addEventListener("click", function (e) {
+          Homey.set("nicehash_apiKey", apiKeyElement.value, function (err) {
+            if (err) return Homey.alert(err);
+          });
+          Homey.set("nicehash_apiSecret", apiSecretElement.value, function (err) {
+            if (err) return Homey.alert(err);
+          });
+          Homey.set("nicehash_orgId", orgIdElement.value, function (err) {
+            if (err) return Homey.alert(err);
+          });
+
+          Homey.api('GET', '/init', function (err, result) {
+            if (err) return Homey.alert(err);
+            if (!result) return Homey.alert('Login failed, check credentials');
+            
+            Homey.alert('Login successful. Your NiceHash rigs can now be added as devices.');
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

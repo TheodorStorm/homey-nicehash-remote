@@ -1,0 +1,10 @@
+{
+    "type": "number",
+    "title": "Total Profit",
+    "getable": true,
+    "setable": false,
+    "units": { "en": "mBTC" },
+    "uiComponent": "sensor",
+    "icon": "/assets/bitcoin.svg" 
+  }
+  

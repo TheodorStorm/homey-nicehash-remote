@@ -1,0 +1,18 @@
+{
+    "title": {
+        "en": "Set power tariff"
+    },
+    "titleFormatted": {
+        "en": "Set power tariff to [[tariff]]"
+    },
+    "highlight": true,
+    "args": [
+        {
+            "name": "tariff",
+            "type": "number",
+            "placeholder": {
+                "en": "Tariff per kWh"
+            }
+        }
+    ]
+}

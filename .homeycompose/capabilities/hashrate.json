@@ -1,0 +1,10 @@
+{
+    "type": "number",
+    "title": "Speed",
+    "getable": true,
+    "setable": false,
+    "units": { "en": "MH" },
+    "uiComponent": "sensor",
+    "icon": "/assets/speed.svg" 
+  }
+  

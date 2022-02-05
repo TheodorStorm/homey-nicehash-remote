@@ -1,0 +1,35 @@
+{
+  "id": "se.tstorm.nicehashremote",
+  "version": "1.0.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "NiceHash Remote"
+  },
+  "brandColor": "#128EDE",
+  "description": {
+    "en": "Monitor and control your NiceHash rigs"
+  },
+  "category": [
+    "tools"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Theodor Storm",
+    "email": "theodor@tstorm.se"
+  },
+  "api": {
+    "init": {
+      "method": "GET",
+      "path": "/init"
+    }
+  }  
+}

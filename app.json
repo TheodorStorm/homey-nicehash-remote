@@ -1,0 +1,187 @@
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "se.tstorm.nicehashremote",
+  "version": "1.0.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "NiceHash Remote"
+  },
+  "brandColor": "#128EDE",
+  "description": {
+    "en": "Monitor and control your NiceHash rigs"
+  },
+  "category": [
+    "tools"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Theodor Storm",
+    "email": "theodor@tstorm.se"
+  },
+  "api": {
+    "init": {
+      "method": "GET",
+      "path": "/init"
+    }
+  },
+  "flow": {
+    "actions": [
+      {
+        "title": {
+          "en": "Set power tariff"
+        },
+        "titleFormatted": {
+          "en": "Set power tariff to [[tariff]]"
+        },
+        "highlight": true,
+        "args": [
+          {
+            "name": "tariff",
+            "type": "number",
+            "placeholder": {
+              "en": "Tariff per kWh"
+            }
+          }
+        ],
+        "id": "set_tariff_power"
+      },
+      {
+        "title": {
+          "en": "Set power tariff currency"
+        },
+        "titleFormatted": {
+          "en": "Set power tariff currency to [[tariff_currency]]"
+        },
+        "highlight": true,
+        "args": [
+          {
+            "name": "tariff_currency",
+            "type": "text",
+            "placeholder": {
+              "en": "USD"
+            }
+          }
+        ],
+        "id": "set_tariff_power_currency"
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "NiceHash Rig"
+      },
+      "class": "other",
+      "capabilities": [
+        "onoff",
+        "measure_power",
+        "meter_power",
+        "measure_profit",
+        "meter_profit",
+        "measure_cost",
+        "meter_cost",
+        "algorithm",
+        "hashrate"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/nicehash-rig/assets/images/small.png",
+        "large": "/drivers/nicehash-rig/assets/images/large.png",
+        "xlarge": "/drivers/nicehash-rig/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "nicehash-rig"
+    }
+  ],
+  "capabilities": {
+    "algorithm": {
+      "type": "string",
+      "title": "Algorithm",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/algorithm.svg"
+    },
+    "hashrate": {
+      "type": "number",
+      "title": "Speed",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "MH"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/speed.svg"
+    },
+    "measure_cost": {
+      "type": "number",
+      "title": "Power Cost",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "mBTC/24h"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/bitcoin.svg"
+    },
+    "measure_profit": {
+      "type": "number",
+      "title": "Profitability",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "mBTC/24h"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/bitcoin.svg"
+    },
+    "meter_cost": {
+      "type": "number",
+      "title": "Total Power Cost",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "mBTC"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/bitcoin.svg"
+    },
+    "meter_profit": {
+      "type": "number",
+      "title": "Total Profit",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "mBTC"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/bitcoin.svg"
+    }
+  }
+}
