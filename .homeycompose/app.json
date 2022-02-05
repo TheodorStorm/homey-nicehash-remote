@@ -1,5 +1,6 @@
 {
   "id": "se.tstorm.nicehashremote",
+  "source": "https://github.com/TheodorStorm/homey-nicehash-remote",
   "version": "1.0.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
