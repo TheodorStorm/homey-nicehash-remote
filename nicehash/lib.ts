@@ -16,8 +16,8 @@ class Lib {
 
     async init(options: { locale: string; apiKey: string; apiSecret: string; orgId: string; }) {
       try {
-        console.log('Init with options:')
-        console.log(options);
+        // console.log('Init with options:')
+        // console.log(options);
         Lib.niceHashApi = new NiceHash({
             apiHost: 'https://api2.nicehash.com',
             locale: options.locale,
