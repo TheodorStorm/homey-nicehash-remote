@@ -21,6 +21,7 @@ class NiceHashRigDevice extends Homey.Device {
 
     this.registerCapabilityListener("onoff", async (value) => {
       await this.niceHashLib?.setRigStatus(this.getData().id, value);
+      this.syncRigDetails();
       // this.setCapabilityValue('onoff', value);
     });
   }
@@ -29,9 +30,11 @@ class NiceHashRigDevice extends Homey.Device {
     let powerUsage = 0.0;
     let algorithms = '';
     let hashrate = 0.0;
-    this.details = await this.niceHashLib?.getRigDetails(this.getData().id);
+    let details = await this.niceHashLib?.getRigDetails(this.getData().id);
+
+    this.setCapabilityValue('status', details.minerStatus).catch(this.error);
     // console.log(this.getName());
-    for(let device of this.details.devices) {
+    for(let device of details.devices) {
       if (device.status.enumName != 'MINING') continue;
       // console.log(device.speeds);
       for(let speed of device.speeds) {
@@ -66,8 +69,8 @@ class NiceHashRigDevice extends Homey.Device {
       powerUsage += device.powerUsage;
     }
 
-    this.setCapabilityValue('onoff', this.details.minerStatus == 'MINING' ? true : false).catch(this.error);
-    this.setCapabilityValue('measure_profit', this.details.profitability * 1000.0).catch(this.error);
+    this.setCapabilityValue('onoff', details.minerStatus == 'STOPPED' ? false : true).catch(this.error);
+    this.setCapabilityValue('measure_profit', details.profitability * 1000.0).catch(this.error);
     this.setCapabilityValue('measure_power', powerUsage).catch(this.error);
 
     let power_tariff = this.homey.settings.get("tariff");
@@ -93,7 +96,7 @@ class NiceHashRigDevice extends Homey.Device {
       this.setCapabilityValue('meter_power', meter_power + power_add).catch(this.error);
 
       let meter_profit = this.getCapabilityValue('meter_profit');
-      let mbtc_profit_add = (this.details.profitability * 1000) * ((now - this.lastSync) / (86400000));
+      let mbtc_profit_add = (details.profitability * 1000) * ((now - this.lastSync) / (86400000));
       this.setCapabilityValue('meter_profit', meter_profit + mbtc_profit_add).catch(this.error);
 
       let meter_cost = this.getCapabilityValue('meter_cost');
@@ -101,6 +104,19 @@ class NiceHashRigDevice extends Homey.Device {
       this.setCapabilityValue('meter_cost', meter_cost + mbtc_cost_add).catch(this.error);
     }
     this.lastSync = new Date().getTime();
+
+    if (!this.details ||
+      this.details.minerStatus != details.minerStatus) {
+      console.log(this.getName() + ' old status="' + (this.details ? this.details.minerStatus : 'unknown') + '", new status="' + details.minerStatus + '"');
+      const statusChangedTrigger = this.homey.flow.getTriggerCard('status_changed');
+      const tokens = {
+        name: this.getName(),
+        status: details.minerStatus
+      };
+      statusChangedTrigger.trigger(tokens).catch(this.error);
+    }
+
+    this.details = details;
   }
 
   /**

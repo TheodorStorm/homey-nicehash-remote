@@ -35,6 +35,39 @@
     }
   },
   "flow": {
+    "triggers": [
+      {
+        "title": {
+          "en": "Rig status changed"
+        },
+        "hint": {
+          "en": "Triggered when a rig changes status."
+        },
+        "tokens": [
+          {
+            "name": "name",
+            "type": "string",
+            "title": {
+              "en": "Rig Name"
+            },
+            "example": {
+              "en": "MyRig"
+            }
+          },
+          {
+            "name": "status",
+            "type": "string",
+            "title": {
+              "en": "Status"
+            },
+            "example": {
+              "en": "MINING"
+            }
+          }
+        ],
+        "id": "status_changed"
+      }
+    ],
     "actions": [
       {
         "title": {
@@ -91,7 +124,8 @@
         "measure_cost",
         "meter_cost",
         "algorithm",
-        "hashrate"
+        "hashrate",
+        "status"
       ],
       "platforms": [
         "local"
@@ -183,6 +217,13 @@
       },
       "uiComponent": "sensor",
       "icon": "/assets/bitcoin.svg"
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor"
     }
   }
 }

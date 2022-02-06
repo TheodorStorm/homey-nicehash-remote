@@ -12,7 +12,8 @@
     "measure_cost",
     "meter_cost",
     "algorithm",
-    "hashrate"
+    "hashrate",
+    "status"
   ],
   "platforms": [
     "local"
