@@ -10,13 +10,13 @@
             "name": "btc_rate",
             "type": "number",
             "title": { "en": "BTC Price" },
-            "example": { "en": "50000" }
+            "example": { "en": "29000" }
         },
         {
             "name": "btc_rate_old",
             "type": "number",
             "title": { "en": "Old BTC Price" },
-            "example": { "en": "49999" }
+            "example": { "en": "50000" }
         },
         {
             "name": "currency",
@@ -25,10 +25,10 @@
             "example": { "en": "USD" }
         },
         {
-            "name": "price_increased",
-            "type": "boolean",
-            "title": { "en": "Price increased" },
-            "example": { "en": "false" }
+            "name": "pct_change",
+            "type": "number",
+            "title": { "en": "% Price Change" },
+            "example": { "en": "-42%" }
         }
     ]
 }

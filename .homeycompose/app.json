@@ -1,7 +1,7 @@
 {
   "id": "se.tstorm.nicehashremote",
   "source": "https://github.com/TheodorStorm/homey-nicehash-remote",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "platforms": [
@@ -31,5 +31,5 @@
       "method": "GET",
       "path": "/init"
     }
-  }  
+  }
 }

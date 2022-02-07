@@ -75,8 +75,8 @@ class NiceHashRigDevice extends Homey.Device {
     this.setCapabilityValue('measure_profit', details.profitability * 1000.0).catch(this.error);
     this.setCapabilityValue('measure_power', powerUsage).catch(this.error);
 
-    let power_tariff = this.homey.settings.get("tariff");
-    let power_tariff_currency = this.homey.settings.get("tariff_currency");
+    let power_tariff = this.homey.settings.get('tariff');
+    let power_tariff_currency = this.homey.settings.get("tariff_currency") || 'USD';
     let costPerDay = 0;
     if (power_tariff && power_tariff_currency) {
       let bitcoinRate = this.niceHashLib?.getBitcoinRate(power_tariff_currency);
