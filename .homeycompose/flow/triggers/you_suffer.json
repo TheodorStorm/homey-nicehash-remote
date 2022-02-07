@@ -1,0 +1,34 @@
+{
+    "title": {
+      "en": "You Suffer"
+    },
+    "hint": {
+      "en": "(Gilfoyle) It's an alert. Whenever the price of Bitcoin dips below a certain value, it's no longer efficient to mine. Comes back up, it is. So, I need to know when it breaks that threshold so I can remotely toggle my rig at home.\n(Richard) OK... any idea how often that might happen?\n(Gilfoyle) Bitcoin is very volatile so... *HGEFBLURGH* a lot."
+    },
+    "tokens": [
+        {
+            "name": "btc_rate",
+            "type": "number",
+            "title": { "en": "BTC Price" },
+            "example": { "en": "50000" }
+        },
+        {
+            "name": "btc_rate_old",
+            "type": "number",
+            "title": { "en": "Old BTC Price" },
+            "example": { "en": "49999" }
+        },
+        {
+            "name": "currency",
+            "type": "string",
+            "title": { "en": "Currency" },
+            "example": { "en": "USD" }
+        },
+        {
+            "name": "price_increased",
+            "type": "boolean",
+            "title": { "en": "Price increased" },
+            "example": { "en": "false" }
+        }
+    ]
+}
