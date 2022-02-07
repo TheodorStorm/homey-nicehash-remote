@@ -1,4 +1,3 @@
-import { POINT_CONVERSION_COMPRESSED } from 'constants';
 import NiceHash from './api';
 const fetch = require('node-fetch');
 

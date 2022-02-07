@@ -32,6 +32,8 @@ class NiceHashRigDevice extends Homey.Device {
     let hashrate = 0.0;
     let details = await this.niceHashLib?.getRigDetails(this.getData().id);
 
+    if (!details) return;
+
     this.setCapabilityValue('status', details.minerStatus).catch(this.error);
     // console.log(this.getName());
     for(let device of details.devices) {
@@ -105,7 +107,7 @@ class NiceHashRigDevice extends Homey.Device {
     }
     this.lastSync = new Date().getTime();
 
-    if (!this.details ||
+    if (this.details &&
       this.details.minerStatus != details.minerStatus) {
       console.log(this.getName() + ' old status="' + (this.details ? this.details.minerStatus : 'unknown') + '", new status="' + details.minerStatus + '"');
       const statusChangedTrigger = this.homey.flow.getTriggerCard('status_changed');

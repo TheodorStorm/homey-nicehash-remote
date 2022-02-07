@@ -3,6 +3,10 @@ import NiceHashLib from './nicehash/lib';
 
 class NiceHashRemote extends Homey.App {
   niceHashLib: NiceHashLib | undefined;
+  lastBitcoinRate: any;
+  bitcoinRateToken: any;
+  bitcoinCurrencyToken: any;
+
   /**
    * onInit is called when the app is initialized.
    */
@@ -19,10 +23,13 @@ class NiceHashRemote extends Homey.App {
     setTariffPowerCurrencyAction.registerRunListener(async (args, state) => {
       console.log(args);
       this.homey.settings.set('tariff_currency', args.tariff_currency)
-    });    
+    });
+    
+    setInterval(() => { this.youSuffer() }, 13000);
   }
 
   async niceHashInit() {
+    this.lastBitcoinRate = null;
     this.niceHashLib = new NiceHashLib();
     let options = {
       locale: this.homey.settings.get('nicehash_locale') || 'en',
@@ -31,6 +38,47 @@ class NiceHashRemote extends Homey.App {
       orgId: this.homey.settings.get('nicehash_orgId')
     }
     return await this.niceHashLib.init(options);
+  }
+
+  async youSuffer() {
+    let power_tariff_currency = this.homey.settings.get("tariff_currency");
+    let bitcoinRate = this.niceHashLib?.getBitcoinRate(power_tariff_currency);
+    let gilfoyle_threshold = this.homey.settings.get('gilfoyle_threshold') || 5;
+
+    if (bitcoinRate) {
+      if (!this.bitcoinRateToken) {
+        this.bitcoinRateToken = await this.homey.flow.createToken("nicehash_bitcoin_rate", {
+          type: "number",
+          title: "BTC Price",
+        });
+      }
+      if (!this.bitcoinCurrencyToken) {
+        this.bitcoinCurrencyToken = await this.homey.flow.createToken("nicehash_bitcoin_currency", {
+          type: "string",
+          title: "BTC Price Currency",
+        });
+      }
+  
+      await this.bitcoinRateToken.setValue(bitcoinRate.last);
+      await this.bitcoinCurrencyToken.setValue(power_tariff_currency);
+    }
+
+    if (this.lastBitcoinRate && bitcoinRate) {
+      let change = (Math.abs(bitcoinRate.last - this.lastBitcoinRate.last) / this.lastBitcoinRate.last)*100.0;
+      if (gilfoyle_threshold == 0 || change > gilfoyle_threshold) {
+        console.log('!!! BTC price changed by ' + change + '% *HGEFBLURGH*');
+        const statusChangedTrigger = this.homey.flow.getTriggerCard('you_suffer');
+        const tokens = {
+          btc_rate_old: this.lastBitcoinRate.last,
+          btc_rate: bitcoinRate.last,
+          currency: power_tariff_currency,
+          price_increased: (bitcoinRate.last > this.lastBitcoinRate.last)
+        };
+        statusChangedTrigger.trigger(tokens).catch(this.error);
+        this.lastBitcoinRate = bitcoinRate;
+      }
+    } else this.lastBitcoinRate = bitcoinRate;
+    
   }
 }
 
