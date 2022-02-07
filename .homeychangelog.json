@@ -1,5 +1,8 @@
 {
   "1.0.0": {
     "en": "First release"
+  },
+  "1.1.1": {
+    "en": "\"You Suffer\" trigger fired when Bitcoin price change exceeds the Gitfoyle Threshold configured in app settings."
   }
 }
