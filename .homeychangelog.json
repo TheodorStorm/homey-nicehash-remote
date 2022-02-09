@@ -4,5 +4,8 @@
   },
   "1.1.1": {
     "en": "\"You Suffer\" trigger fired when Bitcoin price change exceeds the Gitfoyle Threshold configured in app settings."
+  },
+  "1.1.2": {
+    "en": "Bitcoin threshold rate change rounded to 1 decimal for readability."
   }
 }
