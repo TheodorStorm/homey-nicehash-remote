@@ -24,8 +24,6 @@ class NiceHashRemote extends Homey.App {
       console.log(args);
       this.homey.settings.set('tariff_currency', args.tariff_currency)
     });
-    
-    setInterval(() => { this.youSuffer() }, 13000);
   }
 
   async niceHashInit() {
@@ -37,52 +35,9 @@ class NiceHashRemote extends Homey.App {
       apiSecret: this.homey.settings.get('nicehash_apiSecret'),
       orgId: this.homey.settings.get('nicehash_orgId')
     }
-    return await this.niceHashLib.init(options);
-  }
-
-  async youSuffer() {
-    let power_tariff_currency = this.homey.settings.get("tariff_currency") || 'USD';
-    let bitcoinRate = this.niceHashLib?.getBitcoinRate(power_tariff_currency);
-    let gilfoyle_threshold = this.homey.settings.get('gilfoyle_threshold') || 5;
-
-    if (bitcoinRate) {
-      if (!this.bitcoinRateToken) {
-        this.bitcoinRateToken = await this.homey.flow.createToken("nicehash_bitcoin_rate", {
-          type: "number",
-          title: "BTC Price",
-        });
-      }
-      if (!this.bitcoinCurrencyToken) {
-        this.bitcoinCurrencyToken = await this.homey.flow.createToken("nicehash_bitcoin_currency", {
-          type: "string",
-          title: "BTC Price Currency",
-        });
-      }
-  
-      await this.bitcoinRateToken.setValue(bitcoinRate['15m']);
-      await this.bitcoinCurrencyToken.setValue(power_tariff_currency);
+    if (options.apiKey && options.apiSecret && options.orgId) {
+      return await this.niceHashLib.init(options);
     }
-
-    if (this.lastBitcoinRate && bitcoinRate) {
-      let change = ((bitcoinRate['15m'] - this.lastBitcoinRate['15m']) / this.lastBitcoinRate['15m'])*100.0;
-
-      // console.log(this.lastBitcoinRate['15m'] + ' -> ' + bitcoinRate['15m'] + power_tariff_currency + ' (' + change + '%)');
-
-      if (Math.abs(change) >= gilfoyle_threshold) {
-        change = parseFloat(change.toFixed(1));
-        console.log('!!! BTC price changed by ' + change + '% *HGEFBLURGH*');
-        const statusChangedTrigger = this.homey.flow.getTriggerCard('you_suffer');
-        const tokens = {
-          btc_rate_old: this.lastBitcoinRate['15m'],
-          btc_rate: bitcoinRate['15m'],
-          pct_change: change,
-          currency: power_tariff_currency,
-        };
-        statusChangedTrigger.trigger(tokens).catch(this.error);
-        this.lastBitcoinRate = bitcoinRate;
-      }
-    } else this.lastBitcoinRate = bitcoinRate;
-    
   }
 }
 

@@ -7,5 +7,8 @@
   },
   "1.1.2": {
     "en": "Bitcoin threshold rate change rounded to 1 decimal for readability."
+  },
+  "1.1.3": {
+    "en": "Initialization bug fix, removed erratic flow card"
   }
 }
