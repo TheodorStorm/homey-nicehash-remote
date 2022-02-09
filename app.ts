@@ -37,7 +37,9 @@ class NiceHashRemote extends Homey.App {
       apiSecret: this.homey.settings.get('nicehash_apiSecret'),
       orgId: this.homey.settings.get('nicehash_orgId')
     }
-    return await this.niceHashLib.init(options);
+    if (options.apiKey && options.apiSecret && options.orgId) {
+      return await this.niceHashLib.init(options);
+    }
   }
 
   async youSuffer() {
