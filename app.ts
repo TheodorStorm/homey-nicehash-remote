@@ -45,8 +45,6 @@ class NiceHashRemote extends Homey.App {
     let bitcoinRate = this.niceHashLib?.getBitcoinRate(power_tariff_currency);
     let gilfoyle_threshold = this.homey.settings.get('gilfoyle_threshold') || 5;
 
-    // console.log(bitcoinRate);
-
     if (bitcoinRate) {
       if (!this.bitcoinRateToken) {
         this.bitcoinRateToken = await this.homey.flow.createToken("nicehash_bitcoin_rate", {
@@ -66,8 +64,12 @@ class NiceHashRemote extends Homey.App {
     }
 
     if (this.lastBitcoinRate && bitcoinRate) {
-      let change = ((bitcoinRate.last - this.lastBitcoinRate['15m']) / this.lastBitcoinRate['15m'])*100.0;
+      let change = ((bitcoinRate['15m'] - this.lastBitcoinRate['15m']) / this.lastBitcoinRate['15m'])*100.0;
+
+      // console.log(this.lastBitcoinRate['15m'] + ' -> ' + bitcoinRate['15m'] + power_tariff_currency + ' (' + change + '%)');
+
       if (Math.abs(change) >= gilfoyle_threshold) {
+        change = parseFloat(change.toFixed(1));
         console.log('!!! BTC price changed by ' + change + '% *HGEFBLURGH*');
         const statusChangedTrigger = this.homey.flow.getTriggerCard('you_suffer');
         const tokens = {
