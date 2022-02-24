@@ -8,12 +8,17 @@
     "measure_power",
     "meter_power",
     "measure_profit",
+    "measure_profit_scarab",
     "meter_profit",
+    "meter_profit_scarab",
     "measure_cost",
+    "measure_cost_scarab",
     "meter_cost",
+    "meter_cost_scarab",
     "algorithm",
     "hashrate",
-    "status"
+    "status",
+    "measure_profit_percent"
   ],
   "platforms": [
     "local"

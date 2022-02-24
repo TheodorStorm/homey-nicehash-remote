@@ -1,9 +1,9 @@
 {
     "title": {
-      "en": "You Suffer"
+      "en": "Bitcoin Rate Alert"
     },
     "hint": {
-      "en": "(Gilfoyle) It's an alert. Whenever the price of Bitcoin dips below a certain value, it's no longer efficient to mine. Comes back up, it is. So, I need to know when it breaks that threshold so I can remotely toggle my rig at home.\n(Richard) OK... any idea how often that might happen?\n(Gilfoyle) Bitcoin is very volatile so... *HGEFBLURGH* a lot."
+      "en": "Triggered whenever the BitCoin rate changes by X% (Gilfoyle Threshold)"
     },
     "tokens": [
         {

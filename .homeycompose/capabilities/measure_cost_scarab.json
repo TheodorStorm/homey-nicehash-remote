@@ -1,10 +1,10 @@
 {
     "type": "number",
-    "title": "Total Revenue",
+    "title": "Power Cost",
     "getable": true,
     "setable": false,
-    "units": { "en": "mBTC" },
+    "units": { "en": "¤/24h" },
     "uiComponent": "sensor",
-    "icon": "/assets/bitcoin.svg" 
+    "icon": "/assets/scarab.svg"
   }
   

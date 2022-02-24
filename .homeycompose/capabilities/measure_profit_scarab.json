@@ -1,0 +1,9 @@
+{
+  "type": "number",
+  "title": "Profitability",
+  "getable": true,
+  "setable": false,
+  "units": { "en": "¤/24h" },
+  "uiComponent": "sensor",
+  "icon": "/assets/scarab.svg"
+}

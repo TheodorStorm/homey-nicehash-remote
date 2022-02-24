@@ -3,5 +3,6 @@
     "title": "Status",
     "getable": true,
     "setable": false,
-    "uiComponent": "sensor"
+    "uiComponent": "sensor",
+    "icon": "/assets/timelapse_black_24dp.svg" 
 }
