@@ -21,6 +21,7 @@ class NiceHashRigDriver extends Homey.Driver {
   async onPairListDevices() {
     this.rigs = await this.niceHashLib?.getRigs();
     let deviceArray = [];
+
     for(let rig of this.rigs.miningRigs) {
       deviceArray.push({
         name: rig.name,
