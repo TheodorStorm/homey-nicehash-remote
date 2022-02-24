@@ -16,5 +16,8 @@
   },
   "1.2.1": {
     "en": "Bitcoin rate change flow fix"
+  },
+  "1.2.2": {
+    "en": "Added missing driver icon"
   }
 }
