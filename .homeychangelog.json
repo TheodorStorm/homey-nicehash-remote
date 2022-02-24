@@ -13,5 +13,8 @@
   },
   "1.2.0": {
     "en": "Costs & revenue also displayed in local currency, % profit capability added"
+  },
+  "1.2.1": {
+    "en": "Bitcoin rate change flow fix"
   }
 }
