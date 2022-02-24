@@ -68,10 +68,10 @@
       },
       {
         "title": {
-          "en": "Bitcoin Rate Alert"
+          "en": "Bitcoin rate changed"
         },
         "hint": {
-          "en": "Triggered whenever the BitCoin rate changes by X% (Gilfoyle Threshold)"
+          "en": "Triggered whenever the BitCoin rate changes by X% (Gilfoyle threshold)"
         },
         "tokens": [
           {
