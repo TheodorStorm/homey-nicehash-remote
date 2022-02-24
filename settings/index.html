@@ -31,6 +31,11 @@
         <label for="orgId">Organization ID</label>
         <input id="orgId" type="text" value="" />
       </div>
+      <hr size="1" />
+      <div class="field row">
+        <label for="gilfoyleThreshold">Gilfoyle Threshold (%)</label>
+        <input id="gilfoyleThreshold" type="number" value="5" min="1" max="100"/>
+      </div>      
     </fieldset>
 
     <button id="save" class="right">Save changes</button>
@@ -40,6 +45,7 @@
         var apiKeyElement = document.getElementById("apiKey");
         var apiSecretElement = document.getElementById("apiSecret");
         var orgIdElement = document.getElementById("orgId");
+        var gilfoyleThresholdElement = document.getElementById("gilfoyleThreshold");
         var saveElement = document.getElementById("save");
 
         Homey.get("nicehash_apiKey", function (err, val) {
@@ -54,6 +60,10 @@
           if (err) return Homey.alert(err);
           if (val) orgIdElement.value = val;
         });
+        Homey.get("gilfoyle_threshold", function (err, val) {
+          if (err) return Homey.alert(err);
+          if (val) gilfoyleThresholdElement.value = val;
+        });        
 
         saveElement.addEventListener("click", function (e) {
           Homey.set("nicehash_apiKey", apiKeyElement.value, function (err) {
@@ -65,6 +75,9 @@
           Homey.set("nicehash_orgId", orgIdElement.value, function (err) {
             if (err) return Homey.alert(err);
           });
+          Homey.set("gilfoyle_threshold", gilfoyleThresholdElement.value, function (err) {
+            if (err) return Homey.alert(err);
+          });          
           Homey.api('GET', '/init', function (err, result) {
             if (err) return Homey.alert(err);
             if (!result) return Homey.alert('Login failed, check credentials');

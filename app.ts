@@ -24,6 +24,8 @@ class NiceHashRemote extends Homey.App {
       console.log(args);
       this.homey.settings.set('tariff_currency', args.tariff_currency)
     });
+
+    setInterval(() => { this.youSuffer() }, 13000);
   }
 
   async niceHashInit() {
@@ -62,6 +64,24 @@ class NiceHashRemote extends Homey.App {
       await this.bitcoinRateToken.setValue(bitcoinRate['15m']);
       await this.bitcoinCurrencyToken.setValue(power_tariff_currency);
     }
+
+    if (this.lastBitcoinRate && bitcoinRate) {
+      let change = ((bitcoinRate['15m'] - this.lastBitcoinRate['15m']) / this.lastBitcoinRate['15m'])*100.0;
+
+      if (Math.abs(change) >= gilfoyle_threshold) {
+        change = parseFloat(change.toFixed(1));
+        console.log('!!! BTC price changed by ' + change + '% *HGEFBLURGH*');
+        const statusChangedTrigger = this.homey.flow.getTriggerCard('you_suffer');
+        const tokens = {
+          btc_rate_old: this.lastBitcoinRate['15m'],
+          btc_rate: bitcoinRate['15m'],
+          pct_change: change,
+          currency: power_tariff_currency,
+        };
+        statusChangedTrigger.trigger(tokens).catch(this.error);
+        this.lastBitcoinRate = bitcoinRate;
+      }
+    } else this.lastBitcoinRate = bitcoinRate;    
   }
 }
 
