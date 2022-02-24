@@ -37,8 +37,6 @@ class NiceHashRemote extends Homey.App {
     }
     if (options.apiKey && options.apiSecret && options.orgId) {
       return await this.niceHashLib.init(options);
-<<<<<<< HEAD
-=======
     }
   }
 
@@ -63,7 +61,6 @@ class NiceHashRemote extends Homey.App {
   
       await this.bitcoinRateToken.setValue(bitcoinRate['15m']);
       await this.bitcoinCurrencyToken.setValue(power_tariff_currency);
->>>>>>> main
     }
   }
 }
