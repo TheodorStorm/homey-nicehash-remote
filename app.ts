@@ -37,6 +37,33 @@ class NiceHashRemote extends Homey.App {
     }
     if (options.apiKey && options.apiSecret && options.orgId) {
       return await this.niceHashLib.init(options);
+<<<<<<< HEAD
+=======
+    }
+  }
+
+  async youSuffer() {
+    let power_tariff_currency = this.homey.settings.get("tariff_currency") || 'USD';
+    let bitcoinRate = this.niceHashLib?.getBitcoinRate(power_tariff_currency);
+    let gilfoyle_threshold = this.homey.settings.get('gilfoyle_threshold') || 5;
+
+    if (bitcoinRate) {
+      if (!this.bitcoinRateToken) {
+        this.bitcoinRateToken = await this.homey.flow.createToken("nicehash_bitcoin_rate", {
+          type: "number",
+          title: "BTC Price",
+        });
+      }
+      if (!this.bitcoinCurrencyToken) {
+        this.bitcoinCurrencyToken = await this.homey.flow.createToken("nicehash_bitcoin_currency", {
+          type: "string",
+          title: "BTC Price Currency",
+        });
+      }
+  
+      await this.bitcoinRateToken.setValue(bitcoinRate['15m']);
+      await this.bitcoinCurrencyToken.setValue(power_tariff_currency);
+>>>>>>> main
     }
   }
 }

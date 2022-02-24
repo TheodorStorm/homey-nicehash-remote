@@ -3,8 +3,8 @@
     "title": "Total Revenue",
     "getable": true,
     "setable": false,
-    "units": { "en": "mBTC" },
+    "units": { "en": "¤" },
     "uiComponent": "sensor",
-    "icon": "/assets/bitcoin.svg" 
+    "icon": "/assets/scarab.svg" 
   }
   

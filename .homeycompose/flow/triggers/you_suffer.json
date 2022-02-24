@@ -1,0 +1,34 @@
+{
+    "title": {
+      "en": "Bitcoin Rate Alert"
+    },
+    "hint": {
+      "en": "Triggered whenever the BitCoin rate changes by X% (Gilfoyle Threshold)"
+    },
+    "tokens": [
+        {
+            "name": "btc_rate",
+            "type": "number",
+            "title": { "en": "BTC Price" },
+            "example": { "en": "29000" }
+        },
+        {
+            "name": "btc_rate_old",
+            "type": "number",
+            "title": { "en": "Old BTC Price" },
+            "example": { "en": "50000" }
+        },
+        {
+            "name": "currency",
+            "type": "string",
+            "title": { "en": "Currency" },
+            "example": { "en": "USD" }
+        },
+        {
+            "name": "pct_change",
+            "type": "number",
+            "title": { "en": "% Price Change" },
+            "example": { "en": "-42%" }
+        }
+    ]
+}

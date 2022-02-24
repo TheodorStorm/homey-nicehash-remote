@@ -65,6 +65,60 @@
           }
         ],
         "id": "status_changed"
+<<<<<<< HEAD
+=======
+      },
+      {
+        "title": {
+          "en": "Bitcoin Rate Alert"
+        },
+        "hint": {
+          "en": "Triggered whenever the BitCoin rate changes by X% (Gilfoyle Threshold)"
+        },
+        "tokens": [
+          {
+            "name": "btc_rate",
+            "type": "number",
+            "title": {
+              "en": "BTC Price"
+            },
+            "example": {
+              "en": "29000"
+            }
+          },
+          {
+            "name": "btc_rate_old",
+            "type": "number",
+            "title": {
+              "en": "Old BTC Price"
+            },
+            "example": {
+              "en": "50000"
+            }
+          },
+          {
+            "name": "currency",
+            "type": "string",
+            "title": {
+              "en": "Currency"
+            },
+            "example": {
+              "en": "USD"
+            }
+          },
+          {
+            "name": "pct_change",
+            "type": "number",
+            "title": {
+              "en": "% Price Change"
+            },
+            "example": {
+              "en": "-42%"
+            }
+          }
+        ],
+        "id": "you_suffer"
+>>>>>>> main
       }
     ],
     "actions": [
@@ -119,12 +173,17 @@
         "measure_power",
         "meter_power",
         "measure_profit",
+        "measure_profit_scarab",
         "meter_profit",
+        "meter_profit_scarab",
         "measure_cost",
+        "measure_cost_scarab",
         "meter_cost",
+        "meter_cost_scarab",
         "algorithm",
         "hashrate",
-        "status"
+        "status",
+        "measure_profit_percent"
       ],
       "platforms": [
         "local"
@@ -184,6 +243,17 @@
       "uiComponent": "sensor",
       "icon": "/assets/bitcoin.svg"
     },
+    "measure_cost_scarab": {
+      "type": "number",
+      "title": "Power Cost",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "¤/24h"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/scarab.svg"
+    },
     "measure_profit": {
       "type": "number",
       "title": "Profitability",
@@ -194,6 +264,28 @@
       },
       "uiComponent": "sensor",
       "icon": "/assets/bitcoin.svg"
+    },
+    "measure_profit_percent": {
+      "type": "number",
+      "title": "Net Profitability",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "%"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/percent_black_24dp.svg"
+    },
+    "measure_profit_scarab": {
+      "type": "number",
+      "title": "Profitability",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "¤/24h"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/scarab.svg"
     },
     "meter_cost": {
       "type": "number",
@@ -206,9 +298,20 @@
       "uiComponent": "sensor",
       "icon": "/assets/bitcoin.svg"
     },
+    "meter_cost_scarab": {
+      "type": "number",
+      "title": "Total Power Cost",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "¤"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/scarab.svg"
+    },
     "meter_profit": {
       "type": "number",
-      "title": "Total Profit",
+      "title": "Total Revenue",
       "getable": true,
       "setable": false,
       "units": {
@@ -217,12 +320,24 @@
       "uiComponent": "sensor",
       "icon": "/assets/bitcoin.svg"
     },
+    "meter_profit_scarab": {
+      "type": "number",
+      "title": "Total Revenue",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "¤"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/scarab.svg"
+    },
     "status": {
       "type": "string",
       "title": "Status",
       "getable": true,
       "setable": false,
-      "uiComponent": "sensor"
+      "uiComponent": "sensor",
+      "icon": "/assets/timelapse_black_24dp.svg"
     }
   }
 }
