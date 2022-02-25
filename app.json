@@ -162,6 +162,58 @@
   "drivers": [
     {
       "name": {
+        "en": "Dashboard"
+      },
+      "class": "other",
+      "capabilities": [
+        "rigs_mining",
+        "hashrate",
+        "measure_power",
+        "meter_power",
+        "measure_profit",
+        "measure_profit_scarab",
+        "meter_profit",
+        "meter_profit_scarab",
+        "measure_cost",
+        "measure_cost_scarab",
+        "meter_cost",
+        "meter_cost_scarab",
+        "measure_profit_percent"
+      ],
+      "capabilitiesOptions": {
+        "measure_power": {
+          "approximated": true
+        }
+      },
+      "energy": {
+        "cumulative": true
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [],
+      "images": {
+        "small": "/drivers/dashboard/assets/images/small.png",
+        "large": "/drivers/dashboard/assets/images/large.png",
+        "xlarge": "/drivers/dashboard/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "dashboard"
+    },
+    {
+      "name": {
         "en": "NiceHash Rig"
       },
       "class": "other",
@@ -227,29 +279,32 @@
         "en": "MH"
       },
       "uiComponent": "sensor",
-      "icon": "/assets/speed.svg"
+      "icon": "/assets/speed.svg",
+      "insights": true
     },
     "measure_cost": {
       "type": "number",
-      "title": "Power Price",
+      "title": "Power Cost",
       "getable": true,
       "setable": false,
       "units": {
         "en": "mBTC/24h"
       },
       "uiComponent": "sensor",
-      "icon": "/assets/bitcoin.svg"
+      "icon": "/assets/bitcoin.svg",
+      "insights": true
     },
     "measure_cost_scarab": {
       "type": "number",
-      "title": "Power Price",
+      "title": "Power Cost",
       "getable": true,
       "setable": false,
       "units": {
         "en": "¤/24h"
       },
       "uiComponent": "sensor",
-      "icon": "/assets/scarab.svg"
+      "icon": "/assets/scarab.svg",
+      "insights": true
     },
     "measure_profit": {
       "type": "number",
@@ -260,7 +315,8 @@
         "en": "mBTC/24h"
       },
       "uiComponent": "sensor",
-      "icon": "/assets/bitcoin.svg"
+      "icon": "/assets/bitcoin.svg",
+      "insights": true
     },
     "measure_profit_percent": {
       "type": "number",
@@ -271,7 +327,8 @@
         "en": "%"
       },
       "uiComponent": "sensor",
-      "icon": "/assets/percent_black_24dp.svg"
+      "icon": "/assets/percent_black_24dp.svg",
+      "insights": true
     },
     "measure_profit_scarab": {
       "type": "number",
@@ -282,7 +339,8 @@
         "en": "¤/24h"
       },
       "uiComponent": "sensor",
-      "icon": "/assets/scarab.svg"
+      "icon": "/assets/scarab.svg",
+      "insights": true
     },
     "meter_cost": {
       "type": "number",
@@ -293,7 +351,8 @@
         "en": "mBTC"
       },
       "uiComponent": "sensor",
-      "icon": "/assets/bitcoin.svg"
+      "icon": "/assets/bitcoin.svg",
+      "insights": true
     },
     "meter_cost_scarab": {
       "type": "number",
@@ -304,7 +363,8 @@
         "en": "¤"
       },
       "uiComponent": "sensor",
-      "icon": "/assets/scarab.svg"
+      "icon": "/assets/scarab.svg",
+      "insights": true
     },
     "meter_profit": {
       "type": "number",
@@ -315,7 +375,8 @@
         "en": "mBTC"
       },
       "uiComponent": "sensor",
-      "icon": "/assets/bitcoin.svg"
+      "icon": "/assets/bitcoin.svg",
+      "insights": true
     },
     "meter_profit_scarab": {
       "type": "number",
@@ -326,7 +387,16 @@
         "en": "¤"
       },
       "uiComponent": "sensor",
-      "icon": "/assets/scarab.svg"
+      "icon": "/assets/scarab.svg",
+      "insights": true
+    },
+    "rigs_mining": {
+      "type": "string",
+      "title": "Rigs Mining",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/algorithm.svg"
     },
     "status": {
       "type": "string",

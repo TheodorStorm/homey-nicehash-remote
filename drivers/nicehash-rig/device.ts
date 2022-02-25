@@ -1,4 +1,4 @@
-import Homey, { App, BlePeripheral } from 'homey';
+import Homey from 'homey';
 import NiceHashLib from '../../nicehash/lib';
 
 class NiceHashRigDevice extends Homey.Device {
@@ -35,6 +35,7 @@ class NiceHashRigDevice extends Homey.Device {
     let powerUsage = 0.0;
     let algorithms = '';
     let hashrate = 0.0;
+    let mining = 0;
     let details = await this.niceHashLib?.getRigDetails(this.getData().id);
 
     if (!details) return;
@@ -43,6 +44,7 @@ class NiceHashRigDevice extends Homey.Device {
     console.log('───────────────────────────────────────────────────────\n' + this.getName());
     for(let device of details.devices) {
       if (device.status.enumName != 'MINING') continue;
+      mining++;
       console.log(device.speeds);
       for(let speed of device.speeds) {
         if (!algorithms.includes(speed.title)) {
@@ -78,11 +80,28 @@ class NiceHashRigDevice extends Homey.Device {
 
     this.setCapabilityValue('algorithm', algorithms).catch(this.error);
     this.setCapabilityValue('hashrate', Math.round(hashrate * 100)/100).catch(this.error);
-    this.setCapabilityValue('onoff', details.minerStatus == 'STOPPED' ? false : true).catch(this.error);
-    this.setCapabilityValue('measure_profit', Math.round((details.profitability * 1000.0) * 100)/100).catch(this.error);
+    this.setStoreValue('hashrate', hashrate);
+    this.setCapabilityValue('onoff', details.minerStatus == 'STOPPED' || details.minerStatus == 'OFFLINE' ? false : true).catch(this.error);
+    this.setStoreValue('measure_power', powerUsage);
     this.setCapabilityValue('measure_power', Math.round(powerUsage * 100)/100).catch(this.error);
 
-    if (powerUsage == 0) return;
+    if (mining == 0) {
+      this.setStoreValue('mining', 0);
+      this.setStoreValue('measure_profit', 0);
+      this.setCapabilityValue('measure_profit', 0);
+      this.setStoreValue('measure_profit_scarab', 0);
+      this.setCapabilityValue('measure_profit_scarab', 0);
+      this.setStoreValue('measure_cost', 0);
+      this.setCapabilityValue('measure_cost', 0);
+      this.setStoreValue('measure_cost_scarab', 0);
+      this.setCapabilityValue('measure_cost_scarab', 0);
+      return;
+    }
+
+    this.setStoreValue('measure_profit', details.profitability * 1000.0);
+    this.setCapabilityValue('measure_profit', Math.round((details.profitability * 1000.0) * 100)/100).catch(this.error);
+
+    this.setStoreValue('mining', 1);
 
     let power_tariff = this.homey.settings.get('tariff');
     let power_tariff_currency = this.homey.settings.get("tariff_currency") || 'USD';

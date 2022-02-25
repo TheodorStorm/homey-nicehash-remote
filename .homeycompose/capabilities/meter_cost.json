@@ -5,6 +5,7 @@
     "setable": false,
     "units": { "en": "mBTC" },
     "uiComponent": "sensor",
-    "icon": "/assets/bitcoin.svg" 
+    "icon": "/assets/bitcoin.svg",
+    "insights": true
   }
   

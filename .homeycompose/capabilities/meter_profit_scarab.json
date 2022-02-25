@@ -5,6 +5,7 @@
     "setable": false,
     "units": { "en": "¤" },
     "uiComponent": "sensor",
-    "icon": "/assets/scarab.svg" 
-  }
+    "icon": "/assets/scarab.svg",
+    "insights": true
+}
   

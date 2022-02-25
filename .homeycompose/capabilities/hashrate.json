@@ -5,6 +5,7 @@
     "setable": false,
     "units": { "en": "MH" },
     "uiComponent": "sensor",
-    "icon": "/assets/speed.svg" 
+    "icon": "/assets/speed.svg",
+    "insights": true
   }
   

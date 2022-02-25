@@ -1,10 +1,11 @@
 {
     "type": "number",
-    "title": "Power Price",
+    "title": "Power Cost",
     "getable": true,
     "setable": false,
     "units": { "en": "mBTC/24h" },
     "uiComponent": "sensor",
-    "icon": "/assets/bitcoin.svg"
+    "icon": "/assets/bitcoin.svg",
+    "insights": true
   }
   

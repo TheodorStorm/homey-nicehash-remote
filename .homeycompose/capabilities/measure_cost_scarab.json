@@ -1,10 +1,11 @@
 {
     "type": "number",
-    "title": "Power Price",
+    "title": "Power Cost",
     "getable": true,
     "setable": false,
     "units": { "en": "¤/24h" },
     "uiComponent": "sensor",
-    "icon": "/assets/scarab.svg"
+    "icon": "/assets/scarab.svg",
+    "insights": true
   }
   
