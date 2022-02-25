@@ -1,6 +1,6 @@
 {
     "type": "number",
-    "title": "Power Cost",
+    "title": "Power Price",
     "getable": true,
     "setable": false,
     "units": { "en": "mBTC/24h" },

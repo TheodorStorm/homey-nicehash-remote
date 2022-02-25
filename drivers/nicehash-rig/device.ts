@@ -40,7 +40,7 @@ class NiceHashRigDevice extends Homey.Device {
     if (!details) return;
 
     this.setCapabilityValue('status', details.minerStatus).catch(this.error);
-    console.log(this.getName());
+    console.log('───────────────────────────────────────────────────────\n' + this.getName());
     for(let device of details.devices) {
       if (device.status.enumName != 'MINING') continue;
       console.log(device.speeds);
@@ -73,14 +73,16 @@ class NiceHashRigDevice extends Homey.Device {
         }
         hashrate += r;
       }
-      this.setCapabilityValue('algorithm', algorithms);
-      this.setCapabilityValue('hashrate', Math.round(hashrate * 100)/100).catch(this.error);
       powerUsage += device.powerUsage;
     }
 
+    this.setCapabilityValue('algorithm', algorithms).catch(this.error);
+    this.setCapabilityValue('hashrate', Math.round(hashrate * 100)/100).catch(this.error);
     this.setCapabilityValue('onoff', details.minerStatus == 'STOPPED' ? false : true).catch(this.error);
     this.setCapabilityValue('measure_profit', Math.round((details.profitability * 1000.0) * 100)/100).catch(this.error);
     this.setCapabilityValue('measure_power', Math.round(powerUsage * 100)/100).catch(this.error);
+
+    if (powerUsage == 0) return;
 
     let power_tariff = this.homey.settings.get('tariff');
     let power_tariff_currency = this.homey.settings.get("tariff_currency") || 'USD';
@@ -102,23 +104,24 @@ class NiceHashRigDevice extends Homey.Device {
         mBTCRate = bitcoinRate['15m'] / 1000.0;
         let powerMBTCRate = 1/mBTCRate * power_tariff;
         
-        let costPerDayMBTC = costPerDay/mBTCRate;
+        costPerDayMBTC = costPerDay/mBTCRate;
+        console.log(' costPerDayMBTC: ' + costPerDayMBTC);
 
         this.setCapabilityValue('measure_cost', Math.round(costPerDayMBTC * 100)/100);
         this.setStoreValue('measure_cost', costPerDayMBTC);
 
-        console.log('      1 mBTC = ' + mBTCRate + ' ' + power_tariff_currency);
-        console.log('Power tariff = ' + power_tariff + ' ' + power_tariff_currency + '/kWh = ' + powerMBTCRate + ' mBTC/kWh');
-        console.log('        Cost = ' + costPerDayMBTC + ' mBTC/24h = ' + (costPerDayMBTC * mBTCRate) + ' ' + power_tariff_currency + '/24h');
+        console.log('        1 mBTC = ' + mBTCRate + ' ' + power_tariff_currency);
+        console.log('  Power tariff = ' + power_tariff + ' ' + power_tariff_currency + '/kWh = ' + powerMBTCRate + ' mBTC/kWh');
+        console.log('          Cost = ' + costPerDayMBTC + ' mBTC/24h = ' + (costPerDayMBTC * mBTCRate) + ' ' + power_tariff_currency + '/24h');
 
         if (costPerDayMBTC > 0) {
           let revenue = (details.profitability * 1000.0);
           let profit = (revenue - costPerDayMBTC);
-          console.log('Revenue: ' + revenue + ' mBTC/24h');
-          console.log('   Cost: ' + costPerDayMBTC + ' mBTC/24h');
-          console.log(' Profit: ' + profit + ' mBTC/24h')
-          let profitPct = Math.round(profit/costPerDayMBTC * 100);
-          console.log('         ' + profitPct + '%');
+          console.log('        Revenue: ' + revenue + ' mBTC/24h');
+          console.log('           Cost: ' + costPerDayMBTC + ' mBTC/24h');
+          console.log('         Profit: ' + profit + ' mBTC/24h')
+          let profitPct = Math.round((profit/costPerDayMBTC) * 100);
+          console.log('                 (' + profitPct + '%)');
 
           this.setStoreValue('measure_profit_percent', profitPct);
           this.setCapabilityValue('measure_profit_percent', profitPct);
@@ -128,29 +131,35 @@ class NiceHashRigDevice extends Homey.Device {
 
     if (this.lastSync > 0) {
       let now = new Date().getTime(); // milliseconds
-      let meter_power = this.getCapabilityValue('meter_power');
-      let power_add = (powerUsage / 1000) * ((now - this.lastSync) / 3600000);
-      this.setCapabilityValue('meter_power', Math.round((meter_power + power_add) * 100)/100).catch(this.error);
+      let meter_power = this.getStoreValue('meter_power') || 0;
+      let power_add = (powerUsage / 1000) * ((now - this.lastSync) / (1000 * 60 * 60) );
+      console.log('      power_add: ' + power_add + ' kWh');
       this.setStoreValue('meter_power', meter_power + power_add);
+      console.log('   meter_power = ' + meter_power + ' kWh');
+      this.setCapabilityValue('meter_power', Math.round((meter_power) * 100)/100).catch(this.error);
 
-      let meter_profit = this.getStoreValue('meter_profit');
+      let meter_profit = this.getStoreValue('meter_profit') || 0;
+      console.log('   meter_profit: ' + meter_profit);
       let mbtc_profit_add = (details.profitability * 1000) * ((now - this.lastSync) / (86400000));
-      this.setCapabilityValue('meter_profit', Math.round((meter_profit + mbtc_profit_add) * 100)/100).catch(this.error);
+      console.log('mbtc_profit_add: ' + mbtc_profit_add);
       this.setStoreValue('meter_profit', meter_profit + mbtc_profit_add);
+      this.setCapabilityValue('meter_profit', Math.round((meter_profit + mbtc_profit_add) * 100)/100).catch(this.error);
       if (mBTCRate) {
         let profitScarab = (meter_profit + mbtc_profit_add) * mBTCRate;
-        this.setCapabilityValue('meter_profit_scarab', Math.round(profitScarab * 100)/100).catch(this.error);
         this.setStoreValue('meter_profit_scarab', profitScarab);
+        this.setCapabilityValue('meter_profit_scarab', Math.round(profitScarab * 100)/100).catch(this.error);
       }
 
-      let meter_cost = this.getStoreValue('meter_cost');
+      let meter_cost = this.getStoreValue('meter_cost') || 0;
+      console.log('     meter_cost: ' + meter_cost);
       let mbtc_cost_add = costPerDayMBTC * ((now - this.lastSync) / (86400000));
+      console.log('  mbtc_cost_add: ' + mbtc_cost_add);
       let new_meter_cost = meter_cost + mbtc_cost_add;
-      this.setCapabilityValue('meter_cost', Math.round(new_meter_cost * 100)/100).catch(this.error);
       this.setStoreValue('meter_cost', new_meter_cost);
+      this.setCapabilityValue('meter_cost', Math.round(new_meter_cost * 100)/100).catch(this.error);
       if (mBTCRate) {
-        this.setCapabilityValue('meter_cost_scarab', Math.round((new_meter_cost * mBTCRate) * 100)/100).catch(this.error);
         this.setStoreValue('meter_cost_scarab', new_meter_cost * mBTCRate);
+        this.setCapabilityValue('meter_cost_scarab', Math.round((new_meter_cost * mBTCRate) * 100)/100).catch(this.error);
       }
     }
     this.lastSync = new Date().getTime();
