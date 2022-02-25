@@ -19,5 +19,8 @@
   },
   "1.2.2": {
     "en": "Added missing driver icon"
+  },
+  "1.2.3": {
+    "en": "Fixed bug when calculating total mining cost"
   }
 }
