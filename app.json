@@ -231,7 +231,7 @@
     },
     "measure_cost": {
       "type": "number",
-      "title": "Power Cost",
+      "title": "Power Price",
       "getable": true,
       "setable": false,
       "units": {
@@ -242,7 +242,7 @@
     },
     "measure_cost_scarab": {
       "type": "number",
-      "title": "Power Cost",
+      "title": "Power Price",
       "getable": true,
       "setable": false,
       "units": {
