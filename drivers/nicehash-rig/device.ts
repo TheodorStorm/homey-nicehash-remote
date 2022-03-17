@@ -58,12 +58,12 @@ class NiceHashRigDevice extends Homey.Device {
           case 'kH':
             r /= 1000; // You'll get there
             break;
+          case 'Sol':
           case 'MH':
             break; // Hi average miner
           case 'GH':
             r /= 0.001; // Wow, cool rig
             break;
-          case 'Sol':
           case 'TH':
             r /= 0.000001; // Hi Elon
             break;
