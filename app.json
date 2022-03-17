@@ -2,7 +2,7 @@
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "se.tstorm.nicehashremote",
   "source": "https://github.com/TheodorStorm/homey-nicehash-remote",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
   "platforms": [
