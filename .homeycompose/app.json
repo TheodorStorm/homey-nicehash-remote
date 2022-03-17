@@ -31,5 +31,12 @@
       "method": "GET",
       "path": "/init"
     }
+  },
+  "contributing": {
+    "donate": {
+       "githubSponsors": {
+         "username": "TheodorStorm"
+       }
+    }
   }
 }
