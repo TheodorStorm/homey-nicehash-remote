@@ -21,6 +21,7 @@ class NiceHashRigDevice extends Homey.Device {
     if (!this.hasCapability('measure_profit_percent')) await this.addCapability('measure_profit_percent');
     if (!this.hasCapability('measure_temperature')) await this.addCapability('measure_temperature');
     if (!this.hasCapability('measure_load')) await this.addCapability('measure_load');
+    if (!this.hasCapability('power_mode')) await this.addCapability('power_mode');
 
     this.syncRigDetails();
     this.detailsSyncTimer = this.homey.setInterval(() => {
@@ -44,12 +45,16 @@ class NiceHashRigDevice extends Homey.Device {
 
     if (!details) return;
 
+    //console.log(details);
+
     this.setCapabilityValue('status', details.minerStatus).catch(this.error);
+    this.setCapabilityValue('power_mode', details.rigPowerMode).catch(this.error);
+
     console.log('───────────────────────────────────────────────────────\n' + this.getName());
     for(let device of details.devices) {
       if (device.status.enumName == 'DISABLED') continue;
       
-      console.log(device);
+      //console.log(device);
       temperature = Math.max(temperature, device.temperature);
       powerUsage += device.powerUsage;
       load += device.load;
@@ -57,7 +62,7 @@ class NiceHashRigDevice extends Homey.Device {
       if (device.status.enumName != 'MINING') continue;
 
       mining++;
-      console.log(device.speeds);
+
       for(let speed of device.speeds) {
         if (!algorithms.includes(speed.title)) {
           algorithms += (algorithms ? ', ' : '') + speed.title;
@@ -100,7 +105,7 @@ class NiceHashRigDevice extends Homey.Device {
 
     if (this.details &&
       this.details.minerStatus != details.minerStatus) {
-      console.log(this.getName() + ' old status="' + (this.details ? this.details.minerStatus : 'unknown') + '", new status="' + details.minerStatus + '"');
+      //console.log(this.getName() + ' old status="' + (this.details ? this.details.minerStatus : 'unknown') + '", new status="' + details.minerStatus + '"');
       const statusChangedTrigger = this.homey.flow.getTriggerCard('status_changed');
       const tokens = {
         name: this.getName(),

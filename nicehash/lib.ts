@@ -52,6 +52,15 @@ class Lib {
       return await Lib.niceHashApi.post("/main/api/v2/mining/rigs/status2", { body });
     }
 
+    async setRigPowerMode(rigId: String, mode: String) {
+      var body = {
+        rigId: rigId,
+        action: 'POWER_MODE',
+        options: [mode]
+      };
+      return await Lib.niceHashApi.post("/main/api/v2/mining/rigs/status2", { body });
+    }
+
     getBitcoinRate(currency: any) {
       if (Lib.bitcoinTicker && Lib.bitcoinTicker[currency])
         return Lib.bitcoinTicker[currency];

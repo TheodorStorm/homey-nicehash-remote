@@ -1,0 +1,9 @@
+{
+    "type": "number",
+    "title": "Load",
+    "getable": true,
+    "setable": false,
+    "uiComponent": "sensor",
+    "units": { "en": "%" },
+    "icon": "/assets/percent_black_24dp.svg"
+}

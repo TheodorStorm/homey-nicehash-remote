@@ -12,6 +12,13 @@ class NiceHashRigDriver extends Homey.Driver {
     this.log('NiceHashRigDriver has been initialized');
 
     this.niceHashLib = new NiceHashLib();
+
+    const setPowerModeAction = this.homey.flow.getActionCard('set_power_mode');
+    setPowerModeAction.registerRunListener(async (args, state) => {
+      await this.niceHashLib?.setRigPowerMode(args.device.details.rigId, args.power_mode);
+      await args.device.syncRigDetails();
+      return true;
+    });
   }
 
   /**

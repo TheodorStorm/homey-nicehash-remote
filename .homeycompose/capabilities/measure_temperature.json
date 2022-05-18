@@ -1,0 +1,9 @@
+{
+    "type": "number",
+    "title": "Temperature",
+    "getable": true,
+    "setable": false,
+    "uiComponent": "sensor",
+    "units": { "en": "°" },
+    "icon": "/assets/thermostat_black_24dp.svg"
+}

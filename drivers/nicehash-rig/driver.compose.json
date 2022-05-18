@@ -20,6 +20,7 @@
     "algorithm",
     "hashrate",
     "status",
+    "power_mode",
     "measure_profit_percent"
   ],
   "platforms": [

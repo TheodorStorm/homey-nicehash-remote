@@ -156,6 +156,49 @@
           }
         ],
         "id": "set_tariff_power_currency"
+      },
+      {
+        "id": "set_power_mode",
+        "title": {
+          "en": "Set Power mode"
+        },
+        "titleFormatted": {
+          "en": "Set Power mode to [[power_mode]]"
+        },
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=nicehash-rig"
+          },
+          {
+            "type": "dropdown",
+            "name": "power_mode",
+            "title": {
+              "en": "Power mode"
+            },
+            "values": [
+              {
+                "id": "LOW",
+                "label": {
+                  "en": "Low"
+                }
+              },
+              {
+                "id": "MEDIUM",
+                "label": {
+                  "en": "Medium"
+                }
+              },
+              {
+                "id": "HIGH",
+                "label": {
+                  "en": "High"
+                }
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -234,6 +277,7 @@
         "algorithm",
         "hashrate",
         "status",
+        "power_mode",
         "measure_profit_percent"
       ],
       "platforms": [
@@ -413,6 +457,14 @@
       "uiComponent": "sensor",
       "icon": "/assets/scarab.svg",
       "insights": true
+    },
+    "power_mode": {
+      "type": "string",
+      "title": "Power Mode",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/bolt_black_24dp.svg"
     },
     "rigs_mining": {
       "type": "string",
