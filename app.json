@@ -219,6 +219,8 @@
       "class": "other",
       "capabilities": [
         "onoff",
+        "measure_load",
+        "measure_temperature",
         "measure_power",
         "meter_power",
         "measure_profit",
@@ -306,6 +308,17 @@
       "icon": "/assets/scarab.svg",
       "insights": true
     },
+    "measure_load": {
+      "type": "number",
+      "title": "Load",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "units": {
+        "en": "%"
+      },
+      "icon": "/assets/percent_black_24dp.svg"
+    },
     "measure_profit": {
       "type": "number",
       "title": "Profitability",
@@ -341,6 +354,17 @@
       "uiComponent": "sensor",
       "icon": "/assets/scarab.svg",
       "insights": true
+    },
+    "measure_temperature": {
+      "type": "number",
+      "title": "Temperature",
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "units": {
+        "en": "°"
+      },
+      "icon": "/assets/thermostat_black_24dp.svg"
     },
     "meter_cost": {
       "type": "number",

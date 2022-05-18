@@ -19,6 +19,8 @@ class NiceHashRigDevice extends Homey.Device {
     if (!this.hasCapability('meter_cost_scarab')) await this.addCapability('meter_cost_scarab');
     if (!this.hasCapability('meter_profit_scarab')) await this.addCapability('meter_profit_scarab');
     if (!this.hasCapability('measure_profit_percent')) await this.addCapability('measure_profit_percent');
+    if (!this.hasCapability('measure_temperature')) await this.addCapability('measure_temperature');
+    if (!this.hasCapability('measure_load')) await this.addCapability('measure_load');
 
     this.syncRigDetails();
     this.detailsSyncTimer = this.homey.setInterval(() => {
@@ -36,6 +38,8 @@ class NiceHashRigDevice extends Homey.Device {
     let algorithms = '';
     let hashrate = 0.0;
     let mining = 0;
+    let temperature = 0;
+    let load = 0;
     let details = await this.niceHashLib?.getRigDetails(this.getData().id);
 
     if (!details) return;
@@ -43,7 +47,15 @@ class NiceHashRigDevice extends Homey.Device {
     this.setCapabilityValue('status', details.minerStatus).catch(this.error);
     console.log('───────────────────────────────────────────────────────\n' + this.getName());
     for(let device of details.devices) {
+      if (device.status.enumName == 'DISABLED') continue;
+      
+      console.log(device);
+      temperature = Math.max(temperature, device.temperature);
+      powerUsage += device.powerUsage;
+      load += device.load;
+
       if (device.status.enumName != 'MINING') continue;
+
       mining++;
       console.log(device.speeds);
       for(let speed of device.speeds) {
@@ -75,15 +87,28 @@ class NiceHashRigDevice extends Homey.Device {
         }
         hashrate += r;
       }
-      powerUsage += device.powerUsage;
     }
 
     this.setCapabilityValue('algorithm', algorithms).catch(this.error);
+    this.setCapabilityValue('measure_temperature', temperature).catch(this.error);
+    this.setCapabilityValue('measure_load', load).catch(this.error);
     this.setCapabilityValue('hashrate', Math.round(hashrate * 100)/100).catch(this.error);
     this.setStoreValue('hashrate', hashrate);
     this.setCapabilityValue('onoff', details.minerStatus == 'STOPPED' || details.minerStatus == 'OFFLINE' ? false : true).catch(this.error);
     this.setStoreValue('measure_power', powerUsage);
     this.setCapabilityValue('measure_power', Math.round(powerUsage * 100)/100).catch(this.error);
+
+    if (this.details &&
+      this.details.minerStatus != details.minerStatus) {
+      console.log(this.getName() + ' old status="' + (this.details ? this.details.minerStatus : 'unknown') + '", new status="' + details.minerStatus + '"');
+      const statusChangedTrigger = this.homey.flow.getTriggerCard('status_changed');
+      const tokens = {
+        name: this.getName(),
+        status: details.minerStatus
+      };
+      statusChangedTrigger.trigger(tokens).catch(this.error);
+    }
+    this.details = details;
 
     if (mining == 0) {
       this.setStoreValue('mining', 0);
@@ -95,6 +120,8 @@ class NiceHashRigDevice extends Homey.Device {
       this.setCapabilityValue('measure_cost', 0);
       this.setStoreValue('measure_cost_scarab', 0);
       this.setCapabilityValue('measure_cost_scarab', 0);
+      this.setStoreValue('measure_profit_percent', 0);
+      this.setCapabilityValue('measure_profit_percent', 0);
       return;
     }
 
@@ -182,18 +209,6 @@ class NiceHashRigDevice extends Homey.Device {
       }
     }
     this.lastSync = new Date().getTime();
-
-    if (this.details &&
-      this.details.minerStatus != details.minerStatus) {
-      console.log(this.getName() + ' old status="' + (this.details ? this.details.minerStatus : 'unknown') + '", new status="' + details.minerStatus + '"');
-      const statusChangedTrigger = this.homey.flow.getTriggerCard('status_changed');
-      const tokens = {
-        name: this.getName(),
-        status: details.minerStatus
-      };
-      statusChangedTrigger.trigger(tokens).catch(this.error);
-    }
-    this.details = details;
   }
 
   /**
