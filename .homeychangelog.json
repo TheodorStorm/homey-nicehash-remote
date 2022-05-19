@@ -25,5 +25,8 @@
   },
   "1.3.0": {
     "en": "Added dashboard device"
+  },
+  "1.4.0": {
+    "en": "rig power mode capability and action card, rig temperature and load capabilities"
   }
 }
