@@ -52,9 +52,8 @@ class NiceHashRigDevice extends Homey.Device {
 
     console.log('───────────────────────────────────────────────────────\n' + this.getName());
     for(let device of details.devices) {
-      if (device.status.enumName == 'DISABLED') continue;
+      if (device.status.enumName == 'DISABLED' || device.status.enumName == 'OFFLINE') continue;
       
-      //console.log(device);
       temperature = Math.max(temperature, device.temperature);
       powerUsage += device.powerUsage;
       load += device.load;
@@ -127,6 +126,7 @@ class NiceHashRigDevice extends Homey.Device {
       this.setCapabilityValue('measure_cost_scarab', 0);
       this.setStoreValue('measure_profit_percent', 0);
       this.setCapabilityValue('measure_profit_percent', 0);
+      this.lastSync = 0;
       return;
     }
 

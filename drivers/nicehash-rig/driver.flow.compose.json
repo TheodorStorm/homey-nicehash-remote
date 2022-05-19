@@ -1,0 +1,21 @@
+{
+    "actions": [
+        {
+            "id": "set_power_mode",
+            "title": { "en": "Set Power mode" },
+            "titleFormatted": { "en": "Set Power mode to [[power_mode]]" },
+            "args": [
+                {
+                    "type": "dropdown",
+                    "name": "power_mode",
+                    "title": { "en": "Power mode" },
+                    "values": [
+                        { "id": "LOW", "label": { "en": "Low" } },
+                        { "id": "MEDIUM", "label": { "en": "Medium" } },
+                        { "id": "HIGH", "label": { "en": "High" } }
+                    ]
+                }
+            ]            
+        }
+    ]
+}
