@@ -28,5 +28,8 @@
   },
   "1.4.0": {
     "en": "rig power mode capability and action card, rig temperature and load capabilities"
+  },
+  "1.4.1": {
+    "en": "Added status changed trigger card to rigs"
   }
 }
