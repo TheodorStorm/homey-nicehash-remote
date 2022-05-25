@@ -1,0 +1,22 @@
+{
+    "title": {
+      "en": "Rig status changed"
+    },
+    "hint": {
+      "en": "Triggered when a rig changes status."
+    },
+    "tokens": [
+        {
+            "name": "name",
+            "type": "string",
+            "title": { "en": "Rig Name" },
+            "example": { "en": "MyRig" }
+        },
+        {
+            "name": "status",
+            "type": "string",
+            "title": { "en": "Status" },
+            "example": { "en": "MINING" }
+        }
+    ]
+}
