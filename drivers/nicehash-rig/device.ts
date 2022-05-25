@@ -105,7 +105,7 @@ class NiceHashRigDevice extends Homey.Device {
     if (this.details &&
       this.details.minerStatus != details.minerStatus) {
       //console.log(this.getName() + ' old status="' + (this.details ? this.details.minerStatus : 'unknown') + '", new status="' + details.minerStatus + '"');
-      const statusChangedTrigger = this.homey.flow.getTriggerCard('status_changed');
+      const statusChangedTrigger = this.homey.flow.getTriggerCard('rig_status_changed');
       const tokens = {
         name: this.getName(),
         status: details.minerStatus

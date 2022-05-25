@@ -64,7 +64,7 @@
             }
           }
         ],
-        "id": "status_changed"
+        "id": "rig_status_changed"
       },
       {
         "title": {
@@ -116,6 +116,31 @@
           }
         ],
         "id": "you_suffer"
+      },
+      {
+        "id": "status_changed",
+        "title": {
+          "en": "Status changed"
+        },
+        "tokens": [
+          {
+            "name": "status",
+            "type": "string",
+            "title": {
+              "en": "Status"
+            },
+            "example": {
+              "en": "MINING"
+            }
+          }
+        ],
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=nicehash-rig"
+          }
+        ]
       }
     ],
     "actions": [

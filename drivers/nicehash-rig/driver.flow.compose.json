@@ -17,5 +17,19 @@
                 }
             ]            
         }
+    ],
+    "triggers": [
+        {
+        "id": "status_changed",
+        "title": { "en": "Status changed" },
+        "tokens": [
+            {
+                "name": "status",
+                "type": "string",
+                "title": { "en": "Status" },
+                "example": { "en": "MINING" }
+            }
+            ]
+        }
     ]
 }
