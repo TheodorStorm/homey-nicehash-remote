@@ -119,21 +119,14 @@ class NiceHashRigDevice extends Homey.Device {
       this.setStoreValue('measure_profit', 0);
       this.setCapabilityValue('measure_profit', 0);
       this.setStoreValue('measure_profit_scarab', 0);
-      this.setCapabilityValue('measure_profit_scarab', 0);
-      this.setStoreValue('measure_cost', 0);
-      this.setCapabilityValue('measure_cost', 0);
-      this.setStoreValue('measure_cost_scarab', 0);
-      this.setCapabilityValue('measure_cost_scarab', 0);
+      this.setCapabilityValue('measure_profit_scarab', 0);    
       this.setStoreValue('measure_profit_percent', 0);
       this.setCapabilityValue('measure_profit_percent', 0);
-      this.lastSync = 0;
-      return;
+    } else {
+      this.setStoreValue('measure_profit', details.profitability * 1000.0);
+      this.setCapabilityValue('measure_profit', Math.round((details.profitability * 1000.0) * 100)/100).catch(this.error);
+      this.setStoreValue('mining', 1);
     }
-
-    this.setStoreValue('measure_profit', details.profitability * 1000.0);
-    this.setCapabilityValue('measure_profit', Math.round((details.profitability * 1000.0) * 100)/100).catch(this.error);
-
-    this.setStoreValue('mining', 1);
 
     let power_tariff = this.homey.settings.get('tariff');
     let power_tariff_currency = this.homey.settings.get("tariff_currency") || 'USD';
@@ -144,9 +137,11 @@ class NiceHashRigDevice extends Homey.Device {
     if (power_tariff && power_tariff_currency) {
       bitcoinRate = this.niceHashLib?.getBitcoinRate(power_tariff_currency);
       if (bitcoinRate) {
-        let profitabilityScarab = details.profitability * bitcoinRate['15m'];
-        this.setCapabilityValue('measure_profit_scarab', Math.round(profitabilityScarab * 100)/100);
-        this.setStoreValue('measure_profit_scarab', profitabilityScarab)
+        if (mining > 0) {
+          let profitabilityScarab = details.profitability * bitcoinRate['15m'];
+          this.setCapabilityValue('measure_profit_scarab', Math.round(profitabilityScarab * 100)/100);
+          this.setStoreValue('measure_profit_scarab', profitabilityScarab)
+        }
 
         costPerDay = power_tariff * powerUsage/1000 * 24;
         this.setCapabilityValue('measure_cost_scarab', Math.round(costPerDay * 100)/100);
@@ -165,7 +160,7 @@ class NiceHashRigDevice extends Homey.Device {
         console.log('  Power tariff = ' + power_tariff + ' ' + power_tariff_currency + '/kWh = ' + powerMBTCRate + ' mBTC/kWh');
         console.log('          Cost = ' + costPerDayMBTC + ' mBTC/24h = ' + (costPerDayMBTC * mBTCRate) + ' ' + power_tariff_currency + '/24h');
 
-        if (costPerDayMBTC > 0) {
+        if (mining > 0 && costPerDayMBTC > 0) {
           let revenue = (details.profitability * 1000.0);
           let profit = (revenue - costPerDayMBTC);
           console.log('        Revenue: ' + revenue + ' mBTC/24h');
