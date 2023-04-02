@@ -228,10 +228,10 @@
       {
         "id": "set_smart_mode",
         "title": {
-          "en": "Set smart mode"
+          "en": "Set Autopilot"
         },
         "titleFormatted": {
-          "en": "Set smart mode [[smart_mode]]"
+          "en": "Set Autopilot [[smart_mode]]"
         },
         "highlight": true,
         "args": [
