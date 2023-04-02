@@ -1,0 +1,10 @@
+{
+    "type": "number",
+    "title": "Tariff Limit",
+    "getable": true,
+    "setable": false,
+    "units": { "en": "¤" },
+    "uiComponent": "sensor",
+    "icon": "/assets/scarab.svg",
+    "insights": true
+}

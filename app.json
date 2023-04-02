@@ -224,6 +224,55 @@
             ]
           }
         ]
+      },
+      {
+        "id": "set_smart_mode",
+        "title": {
+          "en": "Set Autopilot"
+        },
+        "titleFormatted": {
+          "en": "Set Autopilot [[smart_mode]]"
+        },
+        "highlight": true,
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=nicehash-rig"
+          },
+          {
+            "type": "checkbox",
+            "name": "smart_mode"
+          }
+        ]
+      },
+      {
+        "id": "set_smart_mode_min_profitability",
+        "title": {
+          "en": "Set Autopilot Min Profitability"
+        },
+        "titleFormatted": {
+          "en": "Set Autopilot Min Profitability [[smart_mode_min_profitability]]"
+        },
+        "highlight": true,
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=nicehash-rig"
+          },
+          {
+            "type": "range",
+            "name": "smart_mode_min_profitability",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "label": "%",
+            "title": {
+              "en": "Net profitability"
+            }
+          }
+        ]
       }
     ]
   },
@@ -287,6 +336,7 @@
       "class": "other",
       "capabilities": [
         "onoff",
+        "smart_mode",
         "measure_load",
         "measure_temperature",
         "measure_power",
@@ -303,7 +353,9 @@
         "hashrate",
         "status",
         "power_mode",
-        "measure_profit_percent"
+        "measure_profit_percent",
+        "smart_mode_min_profitability",
+        "measure_tariff_limit"
       ],
       "platforms": [
         "local"
@@ -329,7 +381,26 @@
           "template": "add_devices"
         }
       ],
-      "id": "nicehash-rig"
+      "id": "nicehash-rig",
+      "settings": [
+        {
+          "label": {
+            "en": "Autopilot Min Net Profitability"
+          },
+          "type": "number",
+          "id": "smart_mode_min_profitability",
+          "value": 0,
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "units": {
+            "en": "%"
+          },
+          "hint": {
+            "en": "Net profitability"
+          }
+        }
+      ]
     }
   ],
   "capabilities": {
@@ -424,6 +495,18 @@
       "icon": "/assets/scarab.svg",
       "insights": true
     },
+    "measure_tariff_limit": {
+      "type": "number",
+      "title": "Tariff Limit",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "¤"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/scarab.svg",
+      "insights": true
+    },
     "measure_temperature": {
       "type": "number",
       "title": "Temperature",
@@ -498,6 +581,26 @@
       "setable": false,
       "uiComponent": "sensor",
       "icon": "/assets/algorithm.svg"
+    },
+    "smart_mode": {
+      "type": "boolean",
+      "title": "Autopilot",
+      "getable": true,
+      "setable": true,
+      "uiComponent": "toggle",
+      "icon": "/assets/auto_graph_black_24dp.svg"
+    },
+    "smart_mode_min_profitability": {
+      "type": "number",
+      "title": "Autopilot Min Net Profitability",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "%"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/percent_black_24dp.svg",
+      "insights": true
     },
     "status": {
       "type": "string",

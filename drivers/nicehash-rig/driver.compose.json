@@ -5,6 +5,7 @@
   "class": "other",
   "capabilities": [
     "onoff",
+    "smart_mode",
     "measure_load",
     "measure_temperature",
     "measure_power",
@@ -21,7 +22,9 @@
     "hashrate",
     "status",
     "power_mode",
-    "measure_profit_percent"
+    "measure_profit_percent",
+    "smart_mode_min_profitability",
+    "measure_tariff_limit"
   ],
   "platforms": [
     "local"
