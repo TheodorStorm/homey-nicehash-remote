@@ -39,7 +39,6 @@ class NiceHashRigDevice extends Homey.Device {
     this.registerCapabilityListener("onoff", async (value) => {
       console.log('Device onoff =', value);
       await this.niceHashLib?.setRigStatus(this.getData().id, value);
-      this.syncRigDetails();
     });
 
     this.registerCapabilityListener("smart_mode", async (value) => {
@@ -130,6 +129,7 @@ class NiceHashRigDevice extends Homey.Device {
 
     console.log('      Algorithm: ' + (algorithms ? algorithms : '-'));
     console.log('      Hash Rate: ' + hashrate);
+    console.log('         Status: ' + details.minerStatus);
 
     this.setCapabilityValue('algorithm', algorithms).catch(this.error);
     this.setCapabilityValue('measure_temperature', temperature).catch(this.error);
