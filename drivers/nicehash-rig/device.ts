@@ -36,13 +36,14 @@ class NiceHashRigDevice extends Homey.Device {
 
     // Register capability listeners
     this.registerCapabilityListener("onoff", async (value) => {
-      console.log('Device onoff = ', value);
+      console.log('Device onoff =', value);
       await this.niceHashLib?.setRigStatus(this.getData().id, value);
       this.syncRigDetails();
     });
 
     this.registerCapabilityListener("smart_mode", async (value) => {
-      console.log('Device smart_mode = ', value);
+      console.log('Device smart_mode =', value);
+      await this.niceHashLib?.setRigStatus(this.getData().id, value);
     });
   }
 
@@ -71,7 +72,7 @@ class NiceHashRigDevice extends Homey.Device {
     this.setCapabilityValue('status', details.minerStatus).catch(this.error);
     this.setCapabilityValue('power_mode', details.rigPowerMode).catch(this.error);
 
-    console.log('───────────────────────────────────────────────────────\n' + this.getName());
+    console.log('───────────────────────────────────────────────────────\n[' + this.getName() + ']');
     console.log('   Power tariff: ', power_tariff);
     console.log('   Tariff limit: ', tariff_limit);
 
@@ -140,7 +141,7 @@ class NiceHashRigDevice extends Homey.Device {
       statusChangedTrigger.trigger(tokens).catch(this.error);
     }
     this.details = details;
-
+    
     if (mining == 0) {
       this.setStoreValue('mining', 0);
       this.setStoreValue('measure_profit', 0);
@@ -165,6 +166,12 @@ class NiceHashRigDevice extends Homey.Device {
         return;
       }
     } else {
+      if (!hashrate) {
+        // We're mining but we don't have a hashrate, so we're probably waiting for a job
+        console.log('Waiting for job, setting profitability to 0...');
+        details.profitability = 0;
+      } 
+
       this.setStoreValue('measure_profit', details.profitability * 1000.0);
       this.setCapabilityValue('measure_profit', Math.round((details.profitability * 1000.0) * 100)/100).catch(this.error);
       this.setStoreValue('mining', 1);
@@ -254,36 +261,38 @@ class NiceHashRigDevice extends Homey.Device {
         this.setCapabilityValue('meter_cost_scarab', Math.round((new_meter_cost * mBTCRate) * 100)/100).catch(this.error);
       }
 
-      // Calculate rolling profit percentage
-      if (this.benchmarkStart == 0) {
-        this.benchmarkStart = new Date().getTime();
-        this.rollingProfit = profitPct;
-      } else {
-        this.rollingProfit = this.rollingProfit * ((this.smartMagicNumber-1)/this.smartMagicNumber) + profitPct * (1/this.smartMagicNumber);
-      }
-
-      console.log(' Rolling Profit:', this.rollingProfit, '%');
-
-      if (this.benchmarkStart > 0 && (new Date().getTime() - this.benchmarkStart) > this.smartMagicNumber*60000) {
-        if (this.rollingProfit <= 0) {
-          // Rig is not profitable
-          if (tariff_limit == -1 || power_tariff < tariff_limit) {
-            // Set tariff limit to current tariff
-            console.log('Setting tariff limit to ', power_tariff, ' (was ', tariff_limit, ')');
-            this.setStoreValue('tariff_limit', power_tariff);
-          }
-
-          if (smart_mode) {
-            // Stop rig
-            console.log('Smart mode stopping rig (tariff limit = ', tariff_limit, 'power_tariff = ', power_tariff + ')');
-            await this.niceHashLib?.setRigStatus(this.getData().id, false);
-          }
+      if (hashrate) { // Skip if we are waiting for a job
+        // Calculate rolling profit percentage
+        if (this.benchmarkStart == 0) {
+          this.benchmarkStart = new Date().getTime();
+          this.rollingProfit = profitPct;
         } else {
-          // Rig is profitable
-          if (power_tariff > tariff_limit) {
-            // Raise tariff limit to current tariff
-            console.log('Raising tariff limit to ', power_tariff, ' (was ', tariff_limit, ')');
-            this.setStoreValue('tariff_limit', power_tariff);
+          this.rollingProfit = this.rollingProfit * ((this.smartMagicNumber-1)/this.smartMagicNumber) + profitPct * (1/this.smartMagicNumber);
+        }
+
+        console.log(' Rolling Profit:', this.rollingProfit, '%');
+
+        if (this.benchmarkStart > 0 && (new Date().getTime() - this.benchmarkStart) > this.smartMagicNumber*60000) {
+          if (this.rollingProfit <= 0) {
+            // Rig is not profitable
+            if (tariff_limit == -1 || power_tariff < tariff_limit) {
+              // Set tariff limit to current tariff
+              console.log('Setting tariff limit to ', power_tariff, ' (was ', tariff_limit, ')');
+              this.setStoreValue('tariff_limit', power_tariff);
+            }
+
+            if (smart_mode) {
+              // Stop rig
+              console.log('Smart mode stopping rig (tariff limit = ', tariff_limit, 'power_tariff = ', power_tariff + ')');
+              await this.niceHashLib?.setRigStatus(this.getData().id, false);
+            }
+          } else {
+            // Rig is profitable
+            if (power_tariff > tariff_limit) {
+              // Raise tariff limit to current tariff
+              console.log('Raising tariff limit to ', power_tariff, ' (was ', tariff_limit, ')');
+              this.setStoreValue('tariff_limit', power_tariff);
+            }
           }
         }
       }
