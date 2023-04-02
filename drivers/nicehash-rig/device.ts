@@ -161,6 +161,11 @@ class NiceHashRigDevice extends Homey.Device {
       this.setStoreValue('measure_profit_percent', 0);
       this.setCapabilityValue('measure_profit_percent', 0);
 
+      this.setStoreValue('measure_cost', 0);
+      this.setCapabilityValue('measure_cost', 0);
+      this.setStoreValue('measure_cost_scarab', 0);
+      this.setCapabilityValue('measure_cost_scarab', 0);
+
       this.lastSync = 0;
       this.benchmarkStart = 0;
       this.rollingProfit = 0;
@@ -173,19 +178,20 @@ class NiceHashRigDevice extends Homey.Device {
         // or we haven't been mining for smartMagicNumber hours (force new benchmark every so often, will stop rig if it's not profitable)
         console.log('Smart mode starting rig (tariff limit = ', tariff_limit, 'power_tariff = ', power_tariff + ')');
         await this.niceHashLib?.setRigStatus(this.getData().id, true);
-        return;
       }
-    } else {
-      if (!hashrate) {
-        // We're mining but we don't have a hashrate, so we're probably waiting for a job
-        console.log('Waiting for job, setting profitability to 0...');
-        details.profitability = 0;
-      } 
 
-      this.setStoreValue('measure_profit', details.profitability * 1000.0);
-      this.setCapabilityValue('measure_profit', Math.round((details.profitability * 1000.0) * 100)/100).catch(this.error);
-      this.setStoreValue('mining', 1);
-    }
+      return;
+    } 
+    
+    if (!hashrate) {
+      // We're mining but we don't have a hashrate, so we're probably waiting for a job
+      console.log('Waiting for job, setting profitability to 0...');
+      details.profitability = 0;
+    } 
+
+    this.setStoreValue('measure_profit', details.profitability * 1000.0);
+    this.setCapabilityValue('measure_profit', Math.round((details.profitability * 1000.0) * 100)/100).catch(this.error);
+    this.setStoreValue('mining', 1);
 
     this.lastMined = Date.now();
 
@@ -306,8 +312,6 @@ class NiceHashRigDevice extends Homey.Device {
           }
         }
       }
-    } else {
-      console.log('First sync, skipping meter calculations');
     }
     this.lastSync = new Date().getTime();
   }
