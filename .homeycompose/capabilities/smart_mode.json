@@ -1,0 +1,8 @@
+{
+    "type": "boolean",
+    "title": "Autopilot",
+    "getable": true,
+    "setable": true,
+    "uiComponent": "toggle",
+    "icon": "/assets/auto_graph_black_24dp.svg"
+}

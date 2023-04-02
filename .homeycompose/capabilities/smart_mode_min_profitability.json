@@ -1,0 +1,10 @@
+{
+    "type": "number",
+    "title": "Autopilot Min Net Profitability",
+    "getable": true,
+    "setable": false,
+    "units": { "en": "%" },
+    "uiComponent": "sensor",
+    "icon": "/assets/percent_black_24dp.svg",
+    "insights": true
+}

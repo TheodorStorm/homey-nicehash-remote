@@ -1,0 +1,17 @@
+[
+    {
+        "label": {
+            "en": "Autopilot Min Net Profitability"
+        },
+        "type": "number",
+        "id": "smart_mode_min_profitability",
+        "value": 0,
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "units": {
+            "en": "%"
+        },
+        "hint": { "en": "Net profitability" }
+    }
+]
