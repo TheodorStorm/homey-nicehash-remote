@@ -10,7 +10,8 @@ class Lib {
         .then((res: { text: () => any; }) => res.text())
         .then((text: any) => {
           Lib.bitcoinTicker = JSON.parse(text);
-        });
+        })
+        .catch((err: any) => {});;
     })();
 
     async init(options: { locale: string; apiKey: string; apiSecret: string; orgId: string; }) {
@@ -25,7 +26,7 @@ class Lib {
             orgId: options.orgId
         });
         
-        await Lib.niceHashApi.getTime();
+        await Lib.niceHashApi.getTime().catch((err: any) => {});;
         console.log('NiceHash server time is ' + Lib.niceHashApi.time)
         let rigs = await this.getRigs();
         console.log(rigs.miningRigs.length + ' rigs found');
@@ -37,11 +38,11 @@ class Lib {
     }
 
     async getRigs() {
-      return await Lib.niceHashApi.get("/main/api/v2/mining/rigs2");
+      return await Lib.niceHashApi.get("/main/api/v2/mining/rigs2").catch((err: any) => {});
     }    
 
     async getRigDetails(rigId: String) {
-      return await Lib.niceHashApi.get("/main/api/v2/mining/rig2/" + rigId);
+      return await Lib.niceHashApi.get("/main/api/v2/mining/rig2/" + rigId).catch((err: any) => {});
     }
 
     async setRigStatus(rigId: String, on: boolean) {
@@ -49,7 +50,7 @@ class Lib {
         rigId: rigId,
         action: (on ? "START" : "STOP")
       };
-      return await Lib.niceHashApi.post("/main/api/v2/mining/rigs/status2", { body });
+      return await Lib.niceHashApi.post("/main/api/v2/mining/rigs/status2", { body }).catch((err: any) => {});
     }
 
     async setRigPowerMode(rigId: String, mode: String) {
@@ -58,7 +59,7 @@ class Lib {
         action: 'POWER_MODE',
         options: [mode]
       };
-      return await Lib.niceHashApi.post("/main/api/v2/mining/rigs/status2", { body });
+      return await Lib.niceHashApi.post("/main/api/v2/mining/rigs/status2", { body }).catch((err: any) => {});;
     }
 
     getBitcoinRate(currency: any) {
