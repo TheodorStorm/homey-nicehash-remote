@@ -6,6 +6,6 @@ NiceHash Remote turns Homey into a control center for your NiceHash mining rigs.
 
 3. (Optional) Set your electricity tariff and currency using the flow cards "Set power tariff to" and "Set power tariff currency to", and NiceHash Remote will calculate power costs in mBTC for your mining rigs.
 
-4. (Optional, step 3 required) Enable Smart Mode on each rig, and NiceHash Remote will automatically start/stop the rigs based on tariff and profitability.
+4. (Optional, step 3 required) Enable Autopilot on each rig, and NiceHash Remote will automatically start/stop the rigs based on tariff and profitability.
 
 5. Profit!

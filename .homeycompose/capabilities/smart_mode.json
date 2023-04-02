@@ -1,6 +1,6 @@
 {
     "type": "boolean",
-    "title": "Smart Mode",
+    "title": "Autopilot",
     "getable": true,
     "setable": true,
     "uiComponent": "toggle",
