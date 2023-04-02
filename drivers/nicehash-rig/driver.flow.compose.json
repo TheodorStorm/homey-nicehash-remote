@@ -16,7 +16,24 @@
                     ]
                 }
             ]            
+        },
+        {
+            "id": "set_smart_mode",
+            "title": {
+                "en": "Set smart mode"
+            },
+            "titleFormatted": {
+                "en": "Set smart mode [[smart_mode]]"
+            },
+            "highlight": true,
+            "args": [
+                {
+                    "type": "checkbox",
+                    "name": "smart_mode"
+                }
+            ]
         }
+        
     ],
     "triggers": [
         {

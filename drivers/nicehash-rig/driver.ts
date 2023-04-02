@@ -19,6 +19,13 @@ class NiceHashRigDriver extends Homey.Driver {
       await args.device.syncRigDetails();
       return true;
     });
+
+    const setSmartModeAction = this.homey.flow.getActionCard('set_smart_mode');
+    setSmartModeAction.registerRunListener(async (args, state) => {
+      await args.device.setCapabilityValue('smart_mode', args.smart_mode);
+      await args.device.syncRigDetails();
+      return true;
+    });
   }
 
   /**

@@ -1,0 +1,8 @@
+{
+    "type": "boolean",
+    "title": "Smart Mode",
+    "getable": true,
+    "setable": true,
+    "uiComponent": "toggle",
+    "icon": "/assets/auto_graph_black_24dp.svg"
+}

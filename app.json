@@ -224,6 +224,27 @@
             ]
           }
         ]
+      },
+      {
+        "id": "set_smart_mode",
+        "title": {
+          "en": "Set smart mode"
+        },
+        "titleFormatted": {
+          "en": "Set smart mode [[smart_mode]]"
+        },
+        "highlight": true,
+        "args": [
+          {
+            "type": "device",
+            "name": "device",
+            "filter": "driver_id=nicehash-rig"
+          },
+          {
+            "type": "checkbox",
+            "name": "smart_mode"
+          }
+        ]
       }
     ]
   },
@@ -287,6 +308,7 @@
       "class": "other",
       "capabilities": [
         "onoff",
+        "smart_mode",
         "measure_load",
         "measure_temperature",
         "measure_power",
@@ -303,7 +325,8 @@
         "hashrate",
         "status",
         "power_mode",
-        "measure_profit_percent"
+        "measure_profit_percent",
+        "measure_tariff_limit"
       ],
       "platforms": [
         "local"
@@ -424,6 +447,18 @@
       "icon": "/assets/scarab.svg",
       "insights": true
     },
+    "measure_tariff_limit": {
+      "type": "number",
+      "title": "Tariff Limit",
+      "getable": true,
+      "setable": false,
+      "units": {
+        "en": "¤"
+      },
+      "uiComponent": "sensor",
+      "icon": "/assets/scarab.svg",
+      "insights": true
+    },
     "measure_temperature": {
       "type": "number",
       "title": "Temperature",
@@ -498,6 +533,14 @@
       "setable": false,
       "uiComponent": "sensor",
       "icon": "/assets/algorithm.svg"
+    },
+    "smart_mode": {
+      "type": "boolean",
+      "title": "Smart Mode",
+      "getable": true,
+      "setable": true,
+      "uiComponent": "toggle",
+      "icon": "/assets/auto_graph_black_24dp.svg"
     },
     "status": {
       "type": "string",

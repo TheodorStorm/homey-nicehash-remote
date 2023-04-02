@@ -6,6 +6,9 @@ class NiceHashRigDevice extends Homey.Device {
   details: any;
   detailsSyncTimer: any;
   lastSync: number = 0;
+  lastMined: number = 0;
+  benchmarkStart: number = 0;
+  rollingProfit: number = 0;
 
   /**
    * onInit is called when the device is initialized.
@@ -22,6 +25,8 @@ class NiceHashRigDevice extends Homey.Device {
     if (!this.hasCapability('measure_temperature')) await this.addCapability('measure_temperature');
     if (!this.hasCapability('measure_load')) await this.addCapability('measure_load');
     if (!this.hasCapability('power_mode')) await this.addCapability('power_mode');
+    if (!this.hasCapability('smart_mode')) await this.addCapability('smart_mode');
+    if (!this.hasCapability('measure_tariff_limit')) await this.addCapability('measure_tariff_limit');
 
     this.syncRigDetails();
     this.detailsSyncTimer = this.homey.setInterval(() => {
@@ -29,8 +34,13 @@ class NiceHashRigDevice extends Homey.Device {
     }, 60000);
 
     this.registerCapabilityListener("onoff", async (value) => {
+      console.log('Device onoff = ', value);
       await this.niceHashLib?.setRigStatus(this.getData().id, value);
       this.syncRigDetails();
+    });
+
+    this.registerCapabilityListener("smart_mode", async (value) => {
+      console.log('Device smart_mode = ', value);
     });
   }
 
@@ -42,15 +52,22 @@ class NiceHashRigDevice extends Homey.Device {
     let temperature = 0;
     let load = 0;
     let details = await this.niceHashLib?.getRigDetails(this.getData().id);
+    let power_tariff = this.homey.settings.get('tariff');
+    let power_tariff_currency = this.homey.settings.get("tariff_currency") || 'USD';
+    let smart_mode = await this.getCapabilityValue('smart_mode');
 
-    if (!details) return;
+    if (!details || !details.type || details.type == 'UNMANAGED') return;
 
-    //console.log(details);
+    let tariff_limit = this.getStoreValue('tariff_limit') || -1;
+    if (tariff_limit != -1) this.setCapabilityValue('measure_tariff_limit', tariff_limit).catch(this.error);
 
     this.setCapabilityValue('status', details.minerStatus).catch(this.error);
     this.setCapabilityValue('power_mode', details.rigPowerMode).catch(this.error);
 
     console.log('───────────────────────────────────────────────────────\n' + this.getName());
+    console.log('   Power tariff: ', power_tariff);
+    console.log('   Tariff limit: ', tariff_limit);
+
     for(let device of details.devices) {
       if (device.status.enumName == 'DISABLED' || device.status.enumName == 'OFFLINE') continue;
       
@@ -93,6 +110,9 @@ class NiceHashRigDevice extends Homey.Device {
       }
     }
 
+    console.log('      Algorithm: ' + (algorithms ? algorithms : '-'));
+    console.log('      Hash Rate: ' + hashrate);
+
     this.setCapabilityValue('algorithm', algorithms).catch(this.error);
     this.setCapabilityValue('measure_temperature', temperature).catch(this.error);
     this.setCapabilityValue('measure_load', load).catch(this.error);
@@ -122,18 +142,31 @@ class NiceHashRigDevice extends Homey.Device {
       this.setCapabilityValue('measure_profit_scarab', 0);    
       this.setStoreValue('measure_profit_percent', 0);
       this.setCapabilityValue('measure_profit_percent', 0);
+
+      this.lastSync = 0;
+      this.benchmarkStart = 0;
+      this.rollingProfit = 0;
+
+      if (smart_mode && 
+        (tariff_limit == -1 || tariff_limit > power_tariff ||
+          this.lastMined == 0 || (this.lastMined && Date.now() - this.lastMined > 1000 * 60 * 60 * 7))) {
+        console.log('Smart mode starting rig (tariff limit = ', tariff_limit, 'power_tariff = ', power_tariff + ')');
+        await this.niceHashLib?.setRigStatus(this.getData().id, true);
+        return;
+      }
     } else {
       this.setStoreValue('measure_profit', details.profitability * 1000.0);
       this.setCapabilityValue('measure_profit', Math.round((details.profitability * 1000.0) * 100)/100).catch(this.error);
       this.setStoreValue('mining', 1);
     }
 
-    let power_tariff = this.homey.settings.get('tariff');
-    let power_tariff_currency = this.homey.settings.get("tariff_currency") || 'USD';
+    this.lastMined = Date.now();
+
     let costPerDay = 0;
     let costPerDayMBTC = 0;
     let bitcoinRate = null;
     let mBTCRate = 0;
+    let profitPct = 0;
     if (power_tariff && power_tariff_currency) {
       bitcoinRate = this.niceHashLib?.getBitcoinRate(power_tariff_currency);
       if (bitcoinRate) {
@@ -166,7 +199,7 @@ class NiceHashRigDevice extends Homey.Device {
           console.log('        Revenue: ' + revenue + ' mBTC/24h');
           console.log('           Cost: ' + costPerDayMBTC + ' mBTC/24h');
           console.log('         Profit: ' + profit + ' mBTC/24h')
-          let profitPct = Math.round((profit/costPerDayMBTC) * 100);
+          profitPct = Math.round((profit/costPerDayMBTC) * 100);
           console.log('                 (' + profitPct + '%)');
 
           this.setStoreValue('measure_profit_percent', profitPct);
@@ -207,6 +240,36 @@ class NiceHashRigDevice extends Homey.Device {
         this.setStoreValue('meter_cost_scarab', new_meter_cost * mBTCRate);
         this.setCapabilityValue('meter_cost_scarab', Math.round((new_meter_cost * mBTCRate) * 100)/100).catch(this.error);
       }
+
+      if (this.benchmarkStart == 0) {
+        this.benchmarkStart = new Date().getTime();
+        this.rollingProfit = profitPct;
+      } else {
+        this.rollingProfit = this.rollingProfit * 0.9 + profitPct * 0.1;
+      }
+
+      console.log('Rolling Profit: ', this.rollingProfit, ' (', this.benchmarkStart, ')');
+
+      if (this.benchmarkStart > 0 && (new Date().getTime() - this.benchmarkStart) > 7*60000) {
+        if (this.rollingProfit <= 0) {
+          if (tariff_limit == -1 || power_tariff < tariff_limit) {
+            console.log('Setting tariff limit to ', power_tariff, ' (was ', tariff_limit, ')');
+            this.setStoreValue('tariff_limit', power_tariff);
+          }
+
+          if (smart_mode) {
+            console.log('Smart mode stopping rig (tariff limit = ', tariff_limit, 'power_tariff = ', power_tariff + ')');
+            await this.niceHashLib?.setRigStatus(this.getData().id, false);
+          }
+        } else {
+          if (power_tariff > tariff_limit) {
+            console.log('Raising tariff limit to ', power_tariff, ' (was ', tariff_limit, ')');
+            this.setStoreValue('tariff_limit', power_tariff);
+          }
+        }
+      }
+    } else {
+      console.log('First sync, skipping meter calculations');
     }
     this.lastSync = new Date().getTime();
   }
