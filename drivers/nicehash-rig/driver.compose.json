@@ -23,6 +23,7 @@
     "status",
     "power_mode",
     "measure_profit_percent",
+    "smart_mode_min_profitability",
     "measure_tariff_limit"
   ],
   "platforms": [

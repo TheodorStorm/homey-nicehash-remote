@@ -32,6 +32,27 @@
                     "name": "smart_mode"
                 }
             ]
+        },
+        {
+            "id": "set_smart_mode_min_profitability",
+            "title": {
+                "en": "Set Autopilot Min Profitability"
+            },
+            "titleFormatted": {
+                "en": "Set Autopilot Min Profitability [[smart_mode_min_profitability]]"
+            },
+            "highlight": true,
+            "args": [
+                {
+                    "type": "range",
+                    "name": "smart_mode_min_profitability",
+                    "min": 0,
+                    "max": 100,
+                    "step": 1,
+                    "label": "%",
+                    "title": { "en": "Net profitability" }
+                }
+            ]
         }
         
     ],

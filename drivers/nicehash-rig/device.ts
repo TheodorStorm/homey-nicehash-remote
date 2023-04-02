@@ -18,6 +18,7 @@ class NiceHashRigDevice extends Homey.Device {
     this.log('NiceHashRigDevice has been initialized');
     this.niceHashLib = new NiceHashLib();
 
+    if (!this.hasCapability('smart_mode')) await this.addCapability('smart_mode');
     if (!this.hasCapability('measure_cost_scarab')) await this.addCapability('measure_cost_scarab');
     if (!this.hasCapability('measure_profit_scarab')) await this.addCapability('measure_profit_scarab');
     if (!this.hasCapability('meter_cost_scarab')) await this.addCapability('meter_cost_scarab');
@@ -26,8 +27,8 @@ class NiceHashRigDevice extends Homey.Device {
     if (!this.hasCapability('measure_temperature')) await this.addCapability('measure_temperature');
     if (!this.hasCapability('measure_load')) await this.addCapability('measure_load');
     if (!this.hasCapability('power_mode')) await this.addCapability('power_mode');
-    if (!this.hasCapability('smart_mode')) await this.addCapability('smart_mode');
     if (!this.hasCapability('measure_tariff_limit')) await this.addCapability('measure_tariff_limit');
+    if (!this.hasCapability('smart_mode_min_profitability')) await this.addCapability('smart_mode_min_profitability');
 
     this.syncRigDetails();
     this.detailsSyncTimer = this.homey.setInterval(() => {
@@ -45,6 +46,12 @@ class NiceHashRigDevice extends Homey.Device {
       console.log('Device smart_mode =', value);
       await this.niceHashLib?.setRigStatus(this.getData().id, value);
     });
+
+    this.registerCapabilityListener("smart_mode_min_profitability", async (value) => {
+      console.log('Autopilot Min Net Profitability', value);
+      await this.setCapabilityValue('smart_mode_min_profitability', value);
+    });
+
   }
 
   /*
@@ -52,6 +59,7 @@ class NiceHashRigDevice extends Homey.Device {
     If smart mode is enabled, it will also start/stop mining based on profitability.
   */
   async syncRigDetails() {
+    const settings = this.getSettings();
     let powerUsage = 0.0;
     let algorithms = '';
     let hashrate = 0.0;
@@ -62,6 +70,8 @@ class NiceHashRigDevice extends Homey.Device {
     let power_tariff = this.homey.settings.get('tariff');
     let power_tariff_currency = this.homey.settings.get("tariff_currency") || 'USD';
     let smart_mode = await this.getCapabilityValue('smart_mode');
+    let smart_mode_min_profitability = await settings.smart_mode_min_profitability || 0;    
+    await this.setCapabilityValue('smart_mode_min_profitability', smart_mode_min_profitability).catch(this.error);
 
     // If we don't have rig details, we can't do anything
     if (!details || !details.type || details.type == 'UNMANAGED') return;
@@ -273,13 +283,13 @@ class NiceHashRigDevice extends Homey.Device {
         console.log(' Rolling Profit:', this.rollingProfit, '%');
 
         if (this.benchmarkStart > 0 && (new Date().getTime() - this.benchmarkStart) > this.smartMagicNumber*60000) {
-          if (this.rollingProfit <= 0) {
+          if (this.rollingProfit < smart_mode_min_profitability) {
             // Rig is not profitable
-            if (tariff_limit == -1 || power_tariff < tariff_limit) {
-              // Set tariff limit to current tariff
-              console.log('Setting tariff limit to ', power_tariff, ' (was ', tariff_limit, ')');
-              this.setStoreValue('tariff_limit', power_tariff);
-            }
+            console.log('Rig is not profitable (rolling profit = ', this.rollingProfit, '%)', 'minimum profitability = ', smart_mode_min_profitability, '%');
+
+            // Set tariff limit to current tariff
+            console.log('Setting tariff limit to ', power_tariff, ' (was ', tariff_limit, ')');
+            this.setStoreValue('tariff_limit', power_tariff);
 
             if (smart_mode) {
               // Stop rig
@@ -300,6 +310,12 @@ class NiceHashRigDevice extends Homey.Device {
       console.log('First sync, skipping meter calculations');
     }
     this.lastSync = new Date().getTime();
+  }
+
+  async setSmartModeMinProfitability(minProfitability: number) {    
+    await this.setSettings({
+      smart_mode_min_profitability: minProfitability,
+    });
   }
 
   /**
