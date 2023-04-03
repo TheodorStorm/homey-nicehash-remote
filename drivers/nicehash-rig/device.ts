@@ -75,10 +75,10 @@ class NiceHashRigDevice extends Homey.Device {
     await this.setCapabilityValue('smart_mode_min_profitability', smart_mode_min_profitability).catch(this.error);
 
     // If we don't have rig details, we can't do anything
-    if (!details || !details.type || details.type == 'UNMANAGED') return;
+    if (!details || !details.type || details.type === 'UNMANAGED') return;
 
     const tariff_limit = this.getStoreValue('tariff_limit') || -1;
-    if (tariff_limit != -1) this.setCapabilityValue('measure_tariff_limit', tariff_limit).catch(this.error);
+    if (tariff_limit !== -1) this.setCapabilityValue('measure_tariff_limit', tariff_limit).catch(this.error);
 
     this.setCapabilityValue('status', details.minerStatus).catch(this.error);
     this.setCapabilityValue('power_mode', details.rigPowerMode).catch(this.error);
@@ -133,12 +133,12 @@ class NiceHashRigDevice extends Homey.Device {
     console.log(`      Hash Rate: ${hashrate}`);
     console.log(`         Status: ${details.minerStatus}`);
 
-    this.setCapabilityValue('algorithm', algorithms).catch(this.error);
+    this.setCapabilityValue('algorithm', algorithms || '-').catch(this.error);
     this.setCapabilityValue('measure_temperature', temperature).catch(this.error);
     this.setCapabilityValue('measure_load', load).catch(this.error);
     this.setCapabilityValue('hashrate', Math.round(hashrate * 100) / 100).catch(this.error);
     this.setStoreValue('hashrate', hashrate);
-    this.setCapabilityValue('onoff', !(details.minerStatus == 'STOPPED' || details.minerStatus == 'OFFLINE')).catch(this.error);
+    this.setCapabilityValue('onoff', !(details.minerStatus === 'STOPPED' || details.minerStatus === 'OFFLINE')).catch(this.error);
     this.setStoreValue('measure_power', powerUsage);
     this.setCapabilityValue('measure_power', Math.round(powerUsage * 100) / 100).catch(this.error);
 
@@ -154,7 +154,7 @@ class NiceHashRigDevice extends Homey.Device {
     }
     this.details = details;
 
-    if (mining == 0) {
+    if (mining === 0) {
       this.setStoreValue('mining', 0);
       this.setStoreValue('measure_profit', 0);
       this.setCapabilityValue('measure_profit', 0);
