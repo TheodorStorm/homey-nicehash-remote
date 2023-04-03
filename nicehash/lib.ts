@@ -1,35 +1,39 @@
+'use strict';
+
 import NiceHash from './api';
+
 const fetch = require('node-fetch');
 
 class Lib {
+
     static niceHashApi : NiceHash;
     static bitcoinTicker: any;
     static bitcoinTickerReq = (async function getBitcoinTicker() {
-      setTimeout(getBitcoinTicker, 15*60*1000);
+      setTimeout(getBitcoinTicker, 15 * 60 * 1000);
       fetch('https://blockchain.info/ticker')
         .then((res: { text: () => any; }) => res.text())
         .then((text: any) => {
           Lib.bitcoinTicker = JSON.parse(text);
         })
-        .catch((err: any) => {});;
-    })();
+        .catch((err: any) => {});
+    }());
 
     async init(options: { locale: string; apiKey: string; apiSecret: string; orgId: string; }) {
       try {
         // console.log('Init with options:')
         // console.log(options);
         Lib.niceHashApi = new NiceHash({
-            apiHost: 'https://api2.nicehash.com',
-            locale: options.locale,
-            apiKey: options.apiKey,
-            apiSecret: options.apiSecret,
-            orgId: options.orgId
+          apiHost: 'https://api2.nicehash.com',
+          locale: options.locale,
+          apiKey: options.apiKey,
+          apiSecret: options.apiSecret,
+          orgId: options.orgId,
         });
-        
-        await Lib.niceHashApi.getTime().catch((err: any) => {});;
-        console.log('NiceHash server time is ' + Lib.niceHashApi.time)
-        let rigs = await this.getRigs();
-        console.log(rigs.miningRigs.length + ' rigs found');
+
+        await Lib.niceHashApi.getTime().catch((err: any) => {});
+        console.log(`NiceHash server time is ${Lib.niceHashApi.time}`);
+        const rigs = await this.getRigs();
+        console.log(`${rigs.miningRigs.length} rigs found`);
         return true;
       } catch (ex) {
         console.log(ex);
@@ -38,35 +42,37 @@ class Lib {
     }
 
     async getRigs() {
-      return await Lib.niceHashApi.get("/main/api/v2/mining/rigs2").catch((err: any) => {});
-    }    
+      return await Lib.niceHashApi.get('/main/api/v2/mining/rigs2').catch((err: any) => {});
+    }
 
     async getRigDetails(rigId: String) {
-      return await Lib.niceHashApi.get("/main/api/v2/mining/rig2/" + rigId).catch((err: any) => {});
+      return await Lib.niceHashApi.get(`/main/api/v2/mining/rig2/${rigId}`).catch((err: any) => {});
     }
 
     async setRigStatus(rigId: String, on: boolean) {
-      var body = {
-        rigId: rigId,
-        action: (on ? "START" : "STOP")
+      const body = {
+        rigId,
+        action: (on ? 'START' : 'STOP'),
       };
-      return await Lib.niceHashApi.post("/main/api/v2/mining/rigs/status2", { body }).catch((err: any) => {});
+      return await Lib.niceHashApi.post('/main/api/v2/mining/rigs/status2', { body }).catch((err: any) => {});
     }
 
     async setRigPowerMode(rigId: String, mode: String) {
-      var body = {
-        rigId: rigId,
+      const body = {
+        rigId,
         action: 'POWER_MODE',
-        options: [mode]
+        options: [mode],
       };
-      return await Lib.niceHashApi.post("/main/api/v2/mining/rigs/status2", { body }).catch((err: any) => {});;
+      return await Lib.niceHashApi.post('/main/api/v2/mining/rigs/status2', { body }).catch((err: any) => {});
     }
 
     getBitcoinRate(currency: any) {
-      if (Lib.bitcoinTicker && Lib.bitcoinTicker[currency])
+      if (Lib.bitcoinTicker && Lib.bitcoinTicker[currency]) {
         return Lib.bitcoinTicker[currency];
+      }
       return null;
     }
+
 }
 
-export default Lib
+export default Lib;

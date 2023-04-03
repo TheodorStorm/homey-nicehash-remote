@@ -1,7 +1,10 @@
+'use strict';
+
 import Homey from 'homey';
 import NiceHashLib from '../../nicehash/lib';
 
 class NiceHashDashboard extends Homey.Device {
+
   niceHashLib: NiceHashLib | undefined;
   gatherDetailsTimer: any;
 
@@ -26,11 +29,11 @@ class NiceHashDashboard extends Homey.Device {
   }
 
   async gatherDetails() {
-    const rigDriver = this.homey.drivers.getDriver("nicehash-rig");
+    const rigDriver = this.homey.drivers.getDriver('nicehash-rig');
     if (rigDriver) {
       const rigDevices = rigDriver.getDevices();
 
-      let metrics = new Map<string, number>([
+      const metrics = new Map<string, number>([
         ['measure_power', 0],
         ['meter_power', 0],
         ['measure_profit', 0],
@@ -40,17 +43,17 @@ class NiceHashDashboard extends Homey.Device {
         ['measure_cost', 0],
         ['measure_cost_scarab', 0],
         ['meter_cost', 0],
-        ['meter_cost_scarab', 0],    
-        ['hashrate', 0]        
+        ['meter_cost_scarab', 0],
+        ['hashrate', 0],
       ]);
 
       metrics.forEach((value: number, metric: string) => {
         for (const rig of rigDevices) {
-          let add = rig.getStoreValue(metric);
+          const add = rig.getStoreValue(metric);
           value += add;
           metrics.set(metric, value + add);
         }
-        this.setCapabilityValue(metric, Math.round(value * 100)/100);
+        this.setCapabilityValue(metric, Math.round(value * 100) / 100);
       });
 
       let rigs_total = 0;
@@ -59,18 +62,18 @@ class NiceHashDashboard extends Homey.Device {
         rigs_total++;
         rigs_mining += rig.getStoreValue('mining') || 0;
       }
-      this.setCapabilityValue('rigs_mining', rigs_mining + '/' + rigs_total);
+      this.setCapabilityValue('rigs_mining', `${rigs_mining}/${rigs_total}`);
       // console.log(metrics);
 
-      let revenue = metrics.get('measure_profit') || 0;
-      let costPerDayMBTC = (metrics.get('measure_cost') || 0);
-      let profit = (revenue - costPerDayMBTC);
+      const revenue = metrics.get('measure_profit') || 0;
+      const costPerDayMBTC = (metrics.get('measure_cost') || 0);
+      const profit = (revenue - costPerDayMBTC);
       /*
       console.log('        Revenue: ' + revenue + ' mBTC/24h');
       console.log('           Cost: ' + costPerDayMBTC + ' mBTC/24h');
       console.log('         Profit: ' + profit + ' mBTC/24h')
       */
-      let profitPct = Math.round((profit/costPerDayMBTC) * 100);
+      const profitPct = Math.round((profit / costPerDayMBTC) * 100);
       // console.log('                 (' + profitPct + '%)');
 
       this.setCapabilityValue('measure_profit_percent', profitPct);

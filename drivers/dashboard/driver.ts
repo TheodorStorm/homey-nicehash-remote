@@ -1,3 +1,5 @@
+'use strict';
+
 import Homey from 'homey';
 
 class NiceHashDashboardDriver extends Homey.Driver {
