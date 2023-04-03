@@ -1,7 +1,10 @@
+'use strict';
+
 import Homey from 'homey';
 import NiceHashLib from '../../nicehash/lib';
 
 class NiceHashRigDriver extends Homey.Driver {
+
   niceHashLib: NiceHashLib | undefined;
   rigs: any;
 
@@ -30,7 +33,6 @@ class NiceHashRigDriver extends Homey.Driver {
       await args.device.setSmartModeMinProfitability(args.smart_mode_min_profitability);
       return true;
     });
-
   }
 
   /**
@@ -39,14 +41,14 @@ class NiceHashRigDriver extends Homey.Driver {
    */
   async onPairListDevices() {
     this.rigs = await this.niceHashLib?.getRigs();
-    let deviceArray = [];
+    const deviceArray = [];
 
-    for(let rig of this.rigs.miningRigs) {
+    for (const rig of this.rigs.miningRigs) {
       deviceArray.push({
         name: rig.name,
         data: {
-          id: rig.rigId
-        }
+          id: rig.rigId,
+        },
       });
     }
     return deviceArray;
