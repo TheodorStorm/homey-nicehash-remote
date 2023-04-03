@@ -88,13 +88,13 @@ class NiceHashRigDevice extends Homey.Device {
     console.log('   Tariff limit: ', tariff_limit);
 
     for (const device of details.devices) {
-      if (device.status.enumName == 'DISABLED' || device.status.enumName == 'OFFLINE') continue;
+      if (device.status.enumName === 'DISABLED' || device.status.enumName === 'OFFLINE') continue;
 
       temperature = Math.max(temperature, device.temperature);
       powerUsage += device.powerUsage;
       load += device.load;
 
-      if (device.status.enumName != 'MINING') continue;
+      if (device.status.enumName !== 'MINING') continue;
 
       mining++;
 
@@ -143,7 +143,7 @@ class NiceHashRigDevice extends Homey.Device {
     this.setCapabilityValue('measure_power', Math.round(powerUsage * 100) / 100).catch(this.error);
 
     if (this.details
-      && this.details.minerStatus != details.minerStatus) {
+      && this.details.minerStatus !== details.minerStatus) {
       // console.log(this.getName() + ' old status="' + (this.details ? this.details.minerStatus : 'unknown') + '", new status="' + details.minerStatus + '"');
       const statusChangedTrigger = this.homey.flow.getTriggerCard('rig_status_changed');
       const tokens = {
@@ -173,8 +173,8 @@ class NiceHashRigDevice extends Homey.Device {
       this.rollingProfit = 0;
 
       if (smart_mode
-        && (tariff_limit == -1 || tariff_limit > power_tariff
-          || this.lastMined == 0 || (this.lastMined && Date.now() - this.lastMined > 1000 * 60 * 60 * this.smartMagicNumber))) {
+        && (tariff_limit === -1 || tariff_limit > power_tariff
+          || this.lastMined === 0 || (this.lastMined && Date.now() - this.lastMined > 1000 * 60 * 60 * this.smartMagicNumber))) {
         // We're in autopilot, and we're not mining, and we're either not limited by tariff,
         // or we are but current power tariff is lower than tariff limit,
         // or we haven't been mining for smartMagicNumber hours (force new benchmark every so often, will stop rig if it's not profitable)
@@ -280,7 +280,7 @@ class NiceHashRigDevice extends Homey.Device {
 
       if (hashrate) { // Skip if we are waiting for a job
         // Calculate rolling profit percentage
-        if (this.benchmarkStart == 0) {
+        if (this.benchmarkStart === 0) {
           this.benchmarkStart = new Date().getTime();
           this.rollingProfit = profitPct;
         } else {
