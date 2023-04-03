@@ -42,7 +42,7 @@ class NiceHashRigDevice extends Homey.Device {
     });
 
     this.registerCapabilityListener("smart_mode", async (value) => {
-      console.log('Device smart_mode =', value);
+      console.log('Autopilot =', value);
       await this.niceHashLib?.setRigStatus(this.getData().id, value);
     });
 
@@ -173,10 +173,10 @@ class NiceHashRigDevice extends Homey.Device {
       if (smart_mode && 
         (tariff_limit == -1 || tariff_limit > power_tariff ||
           this.lastMined == 0 || (this.lastMined && Date.now() - this.lastMined > 1000 * 60 * 60 * this.smartMagicNumber))) {
-        // We're in smart mode, and we're not mining, and we're either not limited by tariff, 
+        // We're in autopilot, and we're not mining, and we're either not limited by tariff, 
         // or we are but current power tariff is lower than tariff limit,
         // or we haven't been mining for smartMagicNumber hours (force new benchmark every so often, will stop rig if it's not profitable)
-        console.log('Smart mode starting rig (tariff limit = ', tariff_limit, 'power_tariff = ', power_tariff + ')');
+        console.log('Autopilot starting rig (tariff limit = ', tariff_limit, 'power_tariff = ', power_tariff + ')');
         await this.niceHashLib?.setRigStatus(this.getData().id, true);
       }
 
@@ -289,9 +289,10 @@ class NiceHashRigDevice extends Homey.Device {
         console.log(' Rolling Profit:', this.rollingProfit, '%');
 
         if (this.benchmarkStart > 0 && (new Date().getTime() - this.benchmarkStart) > this.smartMagicNumber*60000) {
-          if (this.rollingProfit < smart_mode_min_profitability) {
+          // Autopilot
+          if (this.rollingProfit < smart_mode_min_profitability && profitPct < smart_mode_min_profitability) {
             // Rig is not profitable
-            console.log('Rig is not profitable (rolling profit = ', this.rollingProfit, '%)', 'minimum profitability = ', smart_mode_min_profitability, '%');
+            console.log('Rig is not profitable (profit = ', profitPct, ' rolling profit = ', this.rollingProfit, '%', 'minimum profitability = ', smart_mode_min_profitability, '%)');
 
             // Set tariff limit to current tariff
             console.log('Setting tariff limit to ', power_tariff, ' (was ', tariff_limit, ')');
@@ -299,7 +300,7 @@ class NiceHashRigDevice extends Homey.Device {
 
             if (smart_mode) {
               // Stop rig
-              console.log('Smart mode stopping rig (tariff limit = ', tariff_limit, 'power_tariff = ', power_tariff + ')');
+              console.log('Autopilot stopping rig (tariff limit = ', tariff_limit, 'power_tariff = ', power_tariff + ')');
               await this.niceHashLib?.setRigStatus(this.getData().id, false);
             }
           } else {
@@ -320,6 +321,8 @@ class NiceHashRigDevice extends Homey.Device {
     await this.setSettings({
       smart_mode_min_profitability: minProfitability,
     });
+    // Benchmark if we are not already mining
+    await this.niceHashLib?.setRigStatus(this.getData().id, true);
   }
 
   /**
@@ -339,6 +342,8 @@ class NiceHashRigDevice extends Homey.Device {
    */
   async onSettings({ oldSettings: {}, newSettings: {}, changedKeys: {} }): Promise<string|void> {
     this.log('NiceHashRigDevice settings where changed');
+    // Benchmark if we are not already mining
+    await this.niceHashLib?.setRigStatus(this.getData().id, true);
   }
 
   /**
