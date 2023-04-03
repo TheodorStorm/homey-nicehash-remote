@@ -55,7 +55,7 @@ class NiceHashRigDevice extends Homey.Device {
 
   /*
     syncRigDetails() is called to sync device status with NiceHash.
-    If smart mode is enabled, it will also start/stop mining based on profitability.
+    If Autopilot is enabled, it will also start/stop mining based on profitability.
   */
   async syncRigDetails() {
     const settings = this.getSettings();
