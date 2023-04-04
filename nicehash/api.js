@@ -83,7 +83,7 @@ class Api {
         Accept: 'application/json, text/plain',
         'Content-Type': 'application/json; charset=UTF-8',
         'X-Request-Id': nonce,
-        'X-User-Agent': 'NHNodeClient',
+        'X-User-Agent': 'NiceHashRemote/1.5.0',
         'X-Time': timestamp,
         'X-Nonce': nonce,
         'X-User-Lang': this.locale,
