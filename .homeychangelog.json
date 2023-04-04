@@ -34,5 +34,8 @@
   },
   "1.5.0": {
     "en": "Enable Autopilot mode to let NiceHash Remote automatically start/stop rigs based on power tariff and profitability"
+  },
+  "1.5.1": {
+    "en": "Minor bug fixes and code cleanup"
   }
 }
