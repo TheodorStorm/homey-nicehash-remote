@@ -18,13 +18,11 @@ class NiceHashRemote extends Homey.App {
 
     const setTariffPowerAction = this.homey.flow.getActionCard('set_tariff_power');
     setTariffPowerAction.registerRunListener(async (args, state) => {
-      console.log(args);
       this.homey.settings.set('tariff', args.tariff);
     });
 
     const setTariffPowerCurrencyAction = this.homey.flow.getActionCard('set_tariff_power_currency');
     setTariffPowerCurrencyAction.registerRunListener(async (args, state) => {
-      console.log(args);
       this.homey.settings.set('tariff_currency', args.tariff_currency);
     });
 

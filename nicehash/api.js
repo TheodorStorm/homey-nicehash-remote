@@ -4,6 +4,8 @@ import CryptoJS from 'crypto-js';
 import request from 'request-promise-native';
 import qs from 'qs';
 
+const packagejson = require('../package.json');
+
 function createNonce() {
   let s = ''; const
     length = 32;
@@ -83,7 +85,7 @@ class Api {
         Accept: 'application/json, text/plain',
         'Content-Type': 'application/json; charset=UTF-8',
         'X-Request-Id': nonce,
-        'X-User-Agent': 'NHNodeClient',
+        'X-User-Agent': 'homey-nicehash-remote/' + packagejson.version,
         'X-Time': timestamp,
         'X-Nonce': nonce,
         'X-User-Lang': this.locale,
