@@ -71,7 +71,7 @@ class NiceHashRigDevice extends Homey.Device {
     const power_tariff = this.homey.settings.get('tariff');
     const power_tariff_currency = this.homey.settings.get('tariff_currency') || 'USD';
     const smart_mode = await this.getCapabilityValue('smart_mode');
-    const smart_mode_min_profitability = await settings.smart_mode_min_profitability || 0;
+    const smart_mode_min_profitability = settings.smart_mode_min_profitability || 0;
     await this.setCapabilityValue('smart_mode_min_profitability', smart_mode_min_profitability).catch(this.error);
 
     // If we don't have rig details, we can't do anything
