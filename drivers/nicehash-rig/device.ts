@@ -13,6 +13,7 @@ class NiceHashRigDevice extends Homey.Device {
   benchmarkStart: number = 0; // benchmark start time
   smartMagicNumber: number = 7; // 7 is the magic number
   rollingProfit: number = 0; // smartMagicNumber minutes rolling profit
+  algorithms: any; // Algorithms
 
   /**
    * onInit is called when the device is initialized.
@@ -20,6 +21,12 @@ class NiceHashRigDevice extends Homey.Device {
   async onInit() {
     this.log('NiceHashRigDevice has been initialized');
     this.niceHashLib = new NiceHashLib();
+
+    this.algorithms = [];
+    const algos = await this.niceHashLib.getAlgorithms().catch(this.error);
+    for (const algo of algos.miningAlgorithms) {
+      this.algorithms[algo.order] = algo;
+    }
 
     if (!this.hasCapability('smart_mode')) await this.addCapability('smart_mode');
     if (!this.hasCapability('measure_cost_scarab')) await this.addCapability('measure_cost_scarab');
@@ -80,53 +87,81 @@ class NiceHashRigDevice extends Homey.Device {
     const tariff_limit = this.getStoreValue('tariff_limit') || -1;
     if (tariff_limit !== -1) this.setCapabilityValue('measure_tariff_limit', tariff_limit).catch(this.error);
 
-    this.setCapabilityValue('status', details.minerStatus).catch(this.error);
-    this.setCapabilityValue('power_mode', details.rigPowerMode).catch(this.error);
+    if (details.minerStatus) this.setCapabilityValue('status', details.minerStatus).catch(this.error);
+    if (details.rigPowerMode) this.setCapabilityValue('power_mode', details.rigPowerMode).catch(this.error);
+
+    // console.log(details);
 
     console.log(`───────────────────────────────────────────────────────\n[${this.getName()}]`);
     console.log('   Power tariff: ', power_tariff);
     console.log('   Tariff limit: ', tariff_limit);
 
-    if (details.devices) {
-      for (const device of details.devices) {
-        if (device.status.enumName === 'DISABLED' || device.status.enumName === 'OFFLINE') continue;
+    if (details.devices || details.hasV4Rigs) {
+      if (details.devices) {
+        for (const device of details.devices) {
+          if (device.status.enumName === 'DISABLED' || device.status.enumName === 'OFFLINE') continue;
 
-        temperature = Math.max(temperature, device.temperature);
-        powerUsage += device.powerUsage;
-        load += device.load;
+          temperature = Math.max(temperature, device.temperature);
+          powerUsage += device.powerUsage;
+          load += device.load;
 
-        if (device.status.enumName !== 'MINING') continue;
+          if (device.status.enumName !== 'MINING') continue;
 
-        mining++;
+          mining++;
 
-        for (const speed of device.speeds) {
-          if (!algorithms.includes(speed.title)) {
-            algorithms += (algorithms ? ', ' : '') + speed.title;
+          for (const speed of device.speeds) {
+            if (!algorithms.includes(speed.title)) {
+              algorithms += (algorithms ? ', ' : '') + speed.title;
+            }
+            let r = Number.parseFloat(speed.speed);
+            switch (speed.displaySuffix) {
+              case 'H':
+                r /= 1000000; // A for effort
+                break;
+              case 'kH':
+                r /= 1000; // You'll get there
+                break;
+              case 'GH':
+                r /= 0.001; // Wow, cool rig
+                break;
+              case 'TH':
+                r /= 0.000001; // Hi Elon
+                break;
+              case 'PH':
+                r /= 0.000000001; // Holy shit, well this will probably overflow but you can afford it
+                break;
+              case 'EH':
+                r /= 0.000000000001; // Godspeed, sheik
+                break;
+              default:
+                break; // Hi average miner (or I have no idea what you are mining)
+            }
+            hashrate += r;
           }
-          let r = Number.parseFloat(speed.speed);
-          switch (speed.displaySuffix) {
-            case 'H':
-              r /= 1000000; // A for effort
-              break;
-            case 'kH':
-              r /= 1000; // You'll get there
-              break;
-            case 'GH':
-              r /= 0.001; // Wow, cool rig
-              break;
-            case 'TH':
-              r /= 0.000001; // Hi Elon
-              break;
-            case 'PH':
-              r /= 0.000000001; // Holy shit, well this will probably overflow but you can afford it
-              break;
-            case 'EH':
-              r /= 0.000000000001; // Godspeed, sheik
-              break;
-            default:
-              break; // Hi average miner (or I have no idea what you are mining)
+        }
+      }
+
+      if (details.hasV4Rigs && details.v4 && details.v4.devices) {
+        for (const device of details.v4.devices) {
+          // console.log(device);
+          if (device.mdv && device.mdv.algorithmsSpeed) {
+            for (const algo of device.mdv.algorithmsSpeed) {
+              // console.log(algo);
+              // console.log(this.algorithms[algo.algorithm]);
+              algorithms += (algorithms ? ', ' : '') + this.algorithms[algo.algorithm].title;
+              const r = Number.parseFloat(algo.speed) / 1_000_000;
+
+              if (r > 0) mining++;
+
+              hashrate += r;
+            }
           }
-          hashrate += r;
+
+          for (const keypair of device.odv) {
+            if (keypair.key === 'Power usage') powerUsage += Number.parseFloat(keypair.value);
+            if (keypair.key === 'Temperature') temperature = Math.max(temperature, Number.parseFloat(keypair.value));
+            if (keypair.key === 'Load') load += Number.parseFloat(keypair.value);
+          }
         }
       }
 
