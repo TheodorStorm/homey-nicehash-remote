@@ -14,6 +14,7 @@ class NiceHashRigDevice extends Homey.Device {
   smartMagicNumber: number = 7; // 7 is the magic number
   rollingProfit: number = 0; // smartMagicNumber minutes rolling profit
   algorithms: any; // Algorithms
+  getAlgorithmsTimer: any; // Timer for getting algorithms
 
   /**
    * onInit is called when the device is initialized.
@@ -22,11 +23,9 @@ class NiceHashRigDevice extends Homey.Device {
     this.log('NiceHashRigDevice has been initialized');
     this.niceHashLib = new NiceHashLib();
 
-    this.algorithms = [];
-    const algos = await this.niceHashLib.getAlgorithms().catch(this.error);
-    for (const algo of algos.miningAlgorithms) {
-      this.algorithms[algo.order] = algo;
-    }
+    this.getAlgorithmsTimer = this.homey.setInterval(() => {
+      this.getAlgorithms();
+    }, 60 * 60 * 1000);
 
     if (!this.hasCapability('smart_mode')) await this.addCapability('smart_mode');
     if (!this.hasCapability('measure_cost_scarab')) await this.addCapability('measure_cost_scarab');
@@ -60,6 +59,16 @@ class NiceHashRigDevice extends Homey.Device {
       console.log('Autopilot Min Net Profitability', value);
       await this.setCapabilityValue('smart_mode_min_profitability', value);
     });
+  }
+
+  private async getAlgorithms() {
+    if (this.niceHashLib) {
+      const algos = await this.niceHashLib.getAlgorithms().catch(this.error);
+      this.algorithms = [];
+      for (const algo of algos.miningAlgorithms) {
+        this.algorithms[algo.order] = algo;
+      }
+    }
   }
 
   /*
@@ -148,7 +157,8 @@ class NiceHashRigDevice extends Homey.Device {
             for (const algo of device.mdv.algorithmsSpeed) {
               // console.log(algo);
               // console.log(this.algorithms[algo.algorithm]);
-              algorithms += (algorithms ? ', ' : '') + this.algorithms[algo.algorithm].title;
+              if (!this.algorithms || !this.algorithms[algo.algorithm]) await this.getAlgorithms();
+              if (this.algorithms[algo.algorithm]) algorithms += (algorithms ? ', ' : '') + this.algorithms[algo.algorithm].title;
               const r = Number.parseFloat(algo.speed) / 1_000_000;
 
               if (r > 0) mining++;
@@ -399,6 +409,7 @@ class NiceHashRigDevice extends Homey.Device {
   async onDeleted() {
     this.log('NiceHashRigDevice has been deleted');
     this.homey.clearInterval(this.detailsSyncTimer);
+    this.homey.clearInterval(this.getAlgorithmsTimer);
   }
 
 }
