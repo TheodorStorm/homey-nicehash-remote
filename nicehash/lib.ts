@@ -49,6 +49,10 @@ class Lib {
       return await Lib.niceHashApi.get(`/main/api/v2/mining/rig2/${rigId}`).catch((err: any) => { console.log(err.message) });
     }
 
+    async getAlgorithms() {
+      return await Lib.niceHashApi.get('/main/api/v2/mining/algorithms').catch((err: any) => { console.log(err.message) });
+    }
+
     async setRigStatus(rigId: String, on: boolean) {
       const body = {
         rigId,
