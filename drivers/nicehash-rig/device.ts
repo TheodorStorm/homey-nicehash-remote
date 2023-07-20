@@ -23,6 +23,7 @@ class NiceHashRigDevice extends Homey.Device {
     this.log('NiceHashRigDevice has been initialized');
     this.niceHashLib = new NiceHashLib();
 
+    this.algorithms = [];
     this.getAlgorithmsTimer = this.homey.setInterval(() => {
       this.getAlgorithms();
     }, 60 * 60 * 1000);
@@ -64,9 +65,11 @@ class NiceHashRigDevice extends Homey.Device {
   private async getAlgorithms() {
     if (this.niceHashLib) {
       const algos = await this.niceHashLib.getAlgorithms().catch(this.error);
-      this.algorithms = [];
-      for (const algo of algos.miningAlgorithms) {
-        this.algorithms[algo.order] = algo;
+      if (algos && algos.miningAlgorithms) {
+        this.algorithms = [];
+        for (const algo of algos.miningAlgorithms) {
+          this.algorithms[algo.order] = algo;
+        }
       }
     }
   }
