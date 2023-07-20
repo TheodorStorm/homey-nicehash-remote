@@ -40,5 +40,8 @@
   },
   "1.6.0": {
     "en": "Support for v4 NiceHash devices"
+  },
+  "1.6.1": {
+    "en": "Fixes rare crash when NiceHash API request fails"
   }
 }
